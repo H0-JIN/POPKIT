@@ -66,7 +66,8 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 | `category` | 기획 / 디자인 / 개발 / 기타 |
 | `sub_category` | 리서치, 이미지, 코드 작성 등 |
 | `tags` | 쉼표 또는 파이프 구분 태그 |
-| `short_description` | 카드용 한 줄 설명 |
+| `short_description` | 카드용 기능 설명 |
+| `editor_quote` 또는 `one_liner` | 카드와 상세 개요에 표시되는 에디터 한줄평 |
 | `full_description` | 상세 페이지 개요 설명 |
 | `recommended_use_cases` | 추천 업무 목록 |
 | `recommended_users` | 추천 사용자 목록 |
@@ -101,7 +102,7 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 ## 데이터 추가 방법
 
 1. Google Sheet에 위 컬럼명으로 시트를 추가하거나 기존 컬럼을 유지합니다.
-2. `lib/data/tools.ts`의 adapter가 `name`, `description`, `카테고리` 같은 일부 기존 컬럼명도 자동 매핑합니다.
+2. `lib/data/tools.ts`의 adapter가 `name`, `description`, `카테고리`, `editor_quote`, `one_liner` 같은 일부 기존 컬럼명도 자동 매핑합니다.
 3. 새 툴은 `slug`와 `tool_id`를 명시하는 것을 권장합니다.
 4. 업데이트 히스토리는 반드시 공식 출처 URL(`source_url`)을 함께 입력합니다.
 
