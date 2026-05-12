@@ -70,7 +70,7 @@ export function sortTools(tools: Tool[], sort: SortKey) {
 
 export function matchesTool(tool: Tool, query: string, filters: string[]) {
   const q = query.trim().toLowerCase();
-  const haystack = [tool.tool_name, tool.editor_quote, tool.short_description, tool.full_description, tool.category, tool.sub_category, ...(tool.category_paths ?? []), ...tool.tags, ...tool.recommended_use_cases].join(" ").toLowerCase();
+  const haystack = [tool.tool_name, tool.editor_quote, tool.short_description, tool.full_description, tool.category, tool.sub_category, ...(tool.category_paths ?? []), ...tool.tags, ...tool.use_tags, ...tool.recommended_use_cases].join(" ").toLowerCase();
   const queryOk = !q || haystack.includes(q);
   const filtersOk = filters.every((filter) => {
     if (filter === "한국어 지원") return tool.korean_support;
