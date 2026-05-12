@@ -10,7 +10,8 @@ export function formatNumber(value: number) {
 
 export function getDomain(url: string) {
   try {
-    return new URL(url).hostname.replace(/^www\./, "");
+    const normalizedUrl = /^[a-z][a-z\d+.-]*:/i.test(url) ? url : `https://${url.replace(/^\/\//, "")}`;
+    return new URL(normalizedUrl).hostname.replace(/^www\./, "");
   } catch {
     return url;
   }
@@ -52,8 +53,9 @@ export function matchesCategoryPath(tool: Tool, category?: string, subCategory?:
   const paths = tool.category_paths?.length ? tool.category_paths : [`${tool.category}/${tool.sub_category}`];
   const normalizedCategory = decodeURIComponent(category);
   const normalizedSubCategory = subCategory ? decodeURIComponent(subCategory) : undefined;
-  if (normalizedSubCategory) return paths.includes(`${normalizedCategory}/${normalizedSubCategory}`);
-  return paths.some((path) => path === normalizedCategory || path.startsWith(`${normalizedCategory}/`));
+  const normalizedPaths = paths.map((path) => path.replace(/[>＞]/g, "/").replace(/\s*\/\s*/g, "/").trim());
+  if (normalizedSubCategory) return normalizedPaths.includes(`${normalizedCategory}/${normalizedSubCategory}`);
+  return normalizedPaths.some((path) => path === normalizedCategory || path.startsWith(`${normalizedCategory}/`));
 }
 
 export function sortTools(tools: Tool[], sort: SortKey) {
