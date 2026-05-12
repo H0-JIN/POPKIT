@@ -1,10 +1,11 @@
 import { fetchSheetRows, type SheetRow } from "@/lib/googleSheets";
 import { seedTools } from "@/lib/data/seed";
 import type { SortKey, Tool } from "@/lib/types";
+import { normalizeUseTags } from "@/lib/useTags";
 import { sortTools } from "@/lib/utils";
 
 const aliases: Record<string, string[]> = {
-  tool_id: ["tool_id", "id"], slug: ["slug"], tool_name: ["tool_name", "name", "AI 이름", "Tool"], category: ["category", "카테고리"], sub_category: ["sub_category", "subcategory", "세부 카테고리"], tags: ["tags", "태그"], category_paths: ["category_paths", "categories", "분류", "복수 분류", "카테고리 경로"], editor_quote: ["editor_quote", "one_liner", "editor_one_liner", "에디터 한줄평", "한줄평"], short_description: ["short_description", "description", "한 줄 설명"], full_description: ["full_description", "상세 설명"], recommended_use_cases: ["recommended_use_cases", "use_cases", "추천 업무"], recommended_users: ["recommended_users", "추천 사용자"], pricing: ["pricing", "price", "가격"], difficulty: ["difficulty", "난이도"], korean_support: ["korean_support", "한국어 지원"], official_url: ["official_url", "url", "공식 URL"], logo_url: ["logo_url"], image_url: ["image_url"], youtube_url: ["youtube_url"], youtube_summary: ["youtube_summary"], rating_average: ["rating_average", "rating", "평점"], rating_count: ["rating_count", "평가 수"], comment_count: ["comment_count", "댓글 수"], popularity_score: ["popularity_score"], last_update_date: ["last_update_date", "updated_at"], created_at: ["created_at"], is_featured: ["is_featured"], main_features: ["main_features", "주요 기능"], pros: ["pros", "장점"], cons: ["cons", "주의할 점"], alternatives: ["alternatives", "유사 AI"]
+  tool_id: ["tool_id", "id"], slug: ["slug"], tool_name: ["tool_name", "name", "AI 이름", "Tool"], category: ["category", "카테고리"], sub_category: ["sub_category", "subcategory", "세부 카테고리"], tags: ["tags", "태그"], use_tags: ["use_tags", "활용 태그", "활용"], category_paths: ["category_paths", "categories", "분류", "복수 분류", "카테고리 경로"], editor_quote: ["editor_quote", "one_liner", "editor_one_liner", "에디터 한줄평", "한줄평"], short_description: ["short_description", "description", "한 줄 설명"], full_description: ["full_description", "상세 설명"], recommended_use_cases: ["recommended_use_cases", "use_cases", "추천 업무"], recommended_users: ["recommended_users", "추천 사용자"], pricing: ["pricing", "price", "가격"], difficulty: ["difficulty", "난이도"], korean_support: ["korean_support", "한국어 지원"], official_url: ["official_url", "url", "공식 URL"], logo_url: ["logo_url"], image_url: ["image_url"], youtube_url: ["youtube_url"], youtube_summary: ["youtube_summary"], rating_average: ["rating_average", "rating", "평점"], rating_count: ["rating_count", "평가 수"], comment_count: ["comment_count", "댓글 수"], popularity_score: ["popularity_score"], last_update_date: ["last_update_date", "updated_at"], created_at: ["created_at"], is_featured: ["is_featured"], main_features: ["main_features", "주요 기능"], pros: ["pros", "장점"], cons: ["cons", "주의할 점"], alternatives: ["alternatives", "유사 AI"]
 };
 
 function value(row: SheetRow, key: string) {
@@ -49,6 +50,7 @@ function adapt(row: SheetRow, index: number): Tool | null {
   const category = rowCategory || seed?.category || "기타";
   const subCategory = rowSubCategory || seed?.sub_category || "생산성";
   const useSeedCategoryPaths = !rowCategory && !rowSubCategory;
+  const sheetUseTags = normalizeUseTags(list(value(row, "use_tags")), list(value(row, "recommended_use_cases")), list(value(row, "tags")), [subCategory]);
   return {
     ...(seed ?? seedTools[index % seedTools.length]),
     tool_id: value(row, "tool_id") || seed?.tool_id || `sheet_${index + 1}`,
@@ -58,6 +60,7 @@ function adapt(row: SheetRow, index: number): Tool | null {
     sub_category: subCategory,
     category_paths: categoryPaths(value(row, "category_paths"), category, subCategory, seed?.category_paths, useSeedCategoryPaths),
     tags: list(value(row, "tags")).length ? list(value(row, "tags")) : seed?.tags ?? [],
+    use_tags: sheetUseTags.length ? sheetUseTags : seed?.use_tags ?? [],
     short_description: value(row, "short_description") || seed?.short_description || "AI 툴 설명을 준비 중입니다.",
     editor_quote: value(row, "editor_quote") || seed?.editor_quote || "",
     full_description: value(row, "full_description") || seed?.full_description || "상세 설명을 준비 중입니다.",

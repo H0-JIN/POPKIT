@@ -39,7 +39,11 @@ export function recentUpdateBonus(dateString: string) {
 }
 
 export function popularityScore(tool: Tool) {
-  return tool.popularity_score ?? tool.rating_count * 0.25 + tool.comment_count * 0.25 + tool.rating_average * 20 + recentUpdateBonus(tool.last_update_date);
+  const manualScore = tool.popularity_score ?? 0;
+  const ratingCountScore = tool.rating_count * 0.25;
+  const commentScore = tool.comment_count * 0.5;
+  const averageRatingScore = tool.rating_average * 20;
+  return manualScore + ratingCountScore + commentScore + averageRatingScore + recentUpdateBonus(tool.last_update_date);
 }
 
 

@@ -1,4 +1,5 @@
 import type { Review, Tool, ToolUpdate } from "@/lib/types";
+import { normalizeUseTags } from "@/lib/useTags";
 
 const base = {
   logo_url: "",
@@ -151,6 +152,7 @@ export const seedTools: Tool[] = rows.map((tool, index) => ({
   sub_category: tool.sub_category,
   category_paths: tool.category_paths ?? categoryPathsBySlug[tool.slug] ?? [`${tool.category}/${tool.sub_category}`],
   tags: tool.tags ?? [tool.sub_category, "AI"],
+  use_tags: tool.use_tags ?? normalizeUseTags(tool.tags ?? [tool.sub_category], [tool.sub_category]),
   short_description: tool.short_description,
   editor_quote: tool.editor_quote ?? editorQuotes[tool.slug] ?? "",
   full_description: `${tool.tool_name}는 ${tool.short_description}입니다. 실무자는 기획, 제작, 검토 흐름에 맞춰 결과를 반복 개선할 수 있습니다.`,
