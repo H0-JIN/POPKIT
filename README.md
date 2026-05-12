@@ -5,7 +5,7 @@
 ## 기술 스택
 
 - Next.js App Router
-- pnpm 10.28.1 권장, npm/yarn 설치 지원
+- npm 기준 설치 및 실행
 - TypeScript
 - Tailwind CSS
 - Google Sheets API / public CSV fallback / seed data fallback
@@ -13,29 +13,13 @@
 
 ## 실행 방법
 
-이 저장소는 `packageManager`를 `pnpm@10.28.1`로 고정하고, npm/yarn도 같은 registry 설정으로 설치할 수 있게 `.npmrc`, `.yarnrc.yml`을 포함합니다. Node.js는 Next.js 16 기준으로 20.9 이상을 권장합니다.
-
-### 권장: pnpm
-
-```bash
-corepack enable
-pnpm install
-pnpm dev
-```
+이 저장소는 Vercel 배포와 로컬 실행 모두 npm 기준으로 설정합니다. Node.js는 Next.js 16 기준으로 20.9 이상을 권장합니다.
 
 ### npm
 
 ```bash
 npm install
 npm run dev
-```
-
-### yarn
-
-```bash
-corepack enable
-yarn install
-yarn dev
 ```
 
 ### 검사용 명령어
@@ -46,17 +30,16 @@ npm run typecheck
 npm run build
 ```
 
-동일한 스크립트는 `pnpm lint`, `pnpm typecheck`, `pnpm build` 또는 `yarn lint`, `yarn typecheck`, `yarn build`로도 실행할 수 있습니다.
+로컬 검증과 Vercel 배포는 `npm install`, `npm run dev`, `npm run build`를 기준으로 진행합니다.
 
 ### npm registry 403 진단
 
-현재 컨테이너에서는 `curl -I https://registry.npmjs.org/next`와 npm/pnpm/yarn 설치 요청이 모두 proxy의 `403 Forbidden`을 반환했습니다. proxy를 제거하면 DNS 조회가 실패하므로, 이는 `package.json` 문제가 아니라 이 실행 환경의 외부 registry 접근 제한으로 판단됩니다. 로컬 또는 Vercel처럼 registry 접근이 허용된 환경에서는 아래 설정을 기준으로 설치하면 됩니다.
+현재 컨테이너에서는 `curl -I https://registry.npmjs.org/next`와 npm 설치 요청이 proxy의 `403 Forbidden`을 반환할 수 있습니다. proxy를 제거하면 DNS 조회가 실패하므로, 이는 `package.json` 문제가 아니라 이 실행 환경의 외부 registry 접근 제한으로 판단됩니다. 로컬 또는 Vercel처럼 registry 접근이 허용된 환경에서는 아래 설정을 기준으로 설치하면 됩니다.
 
 - `.npmrc`: `registry=https://registry.npmjs.org/`
-- `.yarnrc.yml`: `npmRegistryServer: "https://registry.npmjs.org"`
 - `package.json`: Next/React/Tailwind/TypeScript/ESLint 버전을 `latest`가 아닌 semver range로 명시
 
-의존성을 설치할 수 있는 환경에서는 lockfile 생성을 권장합니다. pnpm 사용 시 `pnpm-lock.yaml`, npm 사용 시 `package-lock.json`, yarn 사용 시 `yarn.lock`을 생성해 커밋하세요.
+의존성을 설치할 수 있는 환경에서는 npm 기준 `package-lock.json` 생성을 권장합니다.
 
 ## 환경변수 설정
 
@@ -83,7 +66,8 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 | `category` | 기획 / 디자인 / 개발 / 기타 |
 | `sub_category` | 리서치, 이미지, 코드 작성 등 |
 | `tags` | 쉼표 또는 파이프 구분 태그 |
-| `short_description` | 카드용 한 줄 설명 |
+| `short_description` | 카드용 기능 설명 |
+| `editor_quote` 또는 `one_liner` | 카드와 상세 개요에 표시되는 에디터 한줄평 |
 | `full_description` | 상세 페이지 개요 설명 |
 | `recommended_use_cases` | 추천 업무 목록 |
 | `recommended_users` | 추천 사용자 목록 |
@@ -118,7 +102,7 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 ## 데이터 추가 방법
 
 1. Google Sheet에 위 컬럼명으로 시트를 추가하거나 기존 컬럼을 유지합니다.
-2. `lib/data/tools.ts`의 adapter가 `name`, `description`, `카테고리` 같은 일부 기존 컬럼명도 자동 매핑합니다.
+2. `lib/data/tools.ts`의 adapter가 `name`, `description`, `카테고리`, `editor_quote`, `one_liner` 같은 일부 기존 컬럼명도 자동 매핑합니다.
 3. 새 툴은 `slug`와 `tool_id`를 명시하는 것을 권장합니다.
 4. 업데이트 히스토리는 반드시 공식 출처 URL(`source_url`)을 함께 입력합니다.
 
@@ -138,9 +122,9 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 ### Vercel 프로젝트 설정
 
 - Framework Preset: `Next.js`
-- Install Command: `pnpm install`
-- Build Command: `pnpm build`
-- Development Command: `pnpm dev`
+- Install Command: `npm install`
+- Build Command: `npm run build`
+- Development Command: `npm run dev`
 - Output Directory: `.next`
 - Node.js Version: `20.9` 이상
 
