@@ -55,6 +55,43 @@ const rows: Array<Partial<Tool> & Pick<Tool, "tool_name" | "slug" | "category" |
   { tool_name: "HeyGen", slug: "heygen", category: "기타", sub_category: "콘텐츠", short_description: "AI 아바타와 번역 더빙으로 마케팅 영상을 만드는 도구", official_url: "https://www.heygen.com", tags: ["영상", "아바타", "마케팅"] }
 ];
 
+const editorQuotes: Record<string, string> = {
+  chatgpt: "막막한 초안을 대화로 풀어내는 가장 넓은 작업대.",
+  claude: "긴 문서를 끝까지 읽고, 맥락을 놓치지 않는다.",
+  perplexity: "검색보다 빠르게, 답변보다 근거 있게.",
+  gemini: "Google 작업 흐름 안에서 멀티모달 아이디어를 연결한다.",
+  notebooklm: "내 자료만 바라보게 만든 리서치 파트너.",
+  genspark: "흩어진 검색 결과를 바로 읽을 수 있는 리포트로 묶는다.",
+  gamma: "빈 슬라이드 앞의 시간을 첫 구조로 줄인다.",
+  tome: "발표의 흐름을 이야기처럼 빠르게 잡아준다.",
+  "beautiful-ai": "디자인 규칙을 지키며 슬라이드를 정돈한다.",
+  "napkin-ai": "문장을 다이어그램으로 바꿔 생각을 눈에 보이게 한다.",
+  midjourney: "상상한 분위기를 가장 먼저 이미지로 확인하게 한다.",
+  "dall-e": "이미지 생성과 편집을 대화 흐름 안에 넣는다.",
+  ideogram: "글자가 필요한 시안을 더 빠르게 실험하게 한다.",
+  recraft: "브랜드 그래픽을 벡터 단위로 다듬는 생성형 작업실.",
+  "canva-ai": "템플릿과 AI를 묶어 콘텐츠 제작 속도를 높인다.",
+  "figma-ai": "디자인 파일 안의 반복 탐색과 초안을 줄인다.",
+  "adobe-firefly": "상업 작업에 맞춘 생성 이미지를 Adobe 흐름에 더한다.",
+  runway: "영상 아이디어를 짧은 실험과 편집으로 빠르게 돌린다.",
+  kling: "정적인 장면에 고품질 움직임을 입힌다.",
+  pika: "짧은 영상 실험을 가볍게 반복하게 한다.",
+  "krea-ai": "이미지 방향성을 실시간으로 보며 조정한다.",
+  "freepik-ai": "스톡 리소스와 생성 이미지를 한 흐름으로 연결한다.",
+  cursor: "코드를 대신 쓰기보다, 개발 흐름을 앞당긴다.",
+  "github-copilot": "IDE 안에서 다음 코드를 먼저 제안하는 동료.",
+  "openai-codex": "개발 작업을 이슈 단위로 맡겨보는 코딩 에이전트.",
+  replit: "브라우저 하나로 아이디어를 실행 가능한 앱에 가깝게 만든다.",
+  "bolt-new": "프롬프트를 바로 만져볼 수 있는 웹앱 초안으로 바꾼다.",
+  lovable: "제품 아이디어를 빠르게 화면과 흐름으로 확인한다.",
+  v0: "UI 아이디어를 코드가 있는 시안으로 빠르게 변환한다.",
+  zapier: "앱 사이의 반복 업무를 보이지 않게 이어준다.",
+  make: "반복 업무를 흐름으로 묶는 자동화의 조립식 엔진.",
+  elevenlabs: "목소리와 더빙의 품질 장벽을 낮춘다.",
+  suno: "작곡의 문턱을, 프롬프트 한 줄로 낮췄다.",
+  heygen: "촬영 없이, 사람을 말하게 한다."
+};
+
 export const seedTools: Tool[] = rows.map((tool, index) => ({
   ...base,
   ...tool,
@@ -65,6 +102,7 @@ export const seedTools: Tool[] = rows.map((tool, index) => ({
   sub_category: tool.sub_category,
   tags: tool.tags ?? [tool.sub_category, "AI"],
   short_description: tool.short_description,
+  editor_quote: tool.editor_quote ?? editorQuotes[tool.slug] ?? "",
   full_description: `${tool.tool_name}는 ${tool.short_description}입니다. 실무자는 기획, 제작, 검토 흐름에 맞춰 결과를 반복 개선할 수 있습니다.`,
   recommended_use_cases: tool.tags?.slice(0, 3) ?? [tool.sub_category, "생산성"],
   recommended_users: [tool.category === "개발" ? "개발자" : tool.category === "디자인" ? "디자이너" : "기획자", "초보자", "팀 리드"],
