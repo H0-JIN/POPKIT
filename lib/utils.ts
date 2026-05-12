@@ -42,6 +42,20 @@ export function popularityScore(tool: Tool) {
   return tool.popularity_score ?? tool.rating_count * 0.25 + tool.comment_count * 0.25 + tool.rating_average * 20 + recentUpdateBonus(tool.last_update_date);
 }
 
+
+export function primaryCategoryPath(tool: Tool) {
+  return tool.category_paths?.[0] ?? `${tool.category}/${tool.sub_category}`;
+}
+
+export function matchesCategoryPath(tool: Tool, category?: string, subCategory?: string) {
+  if (!category || category === "All Cases") return true;
+  const paths = tool.category_paths?.length ? tool.category_paths : [`${tool.category}/${tool.sub_category}`];
+  const normalizedCategory = decodeURIComponent(category);
+  const normalizedSubCategory = subCategory ? decodeURIComponent(subCategory) : undefined;
+  if (normalizedSubCategory) return paths.includes(`${normalizedCategory}/${normalizedSubCategory}`);
+  return paths.some((path) => path === normalizedCategory || path.startsWith(`${normalizedCategory}/`));
+}
+
 export function sortTools(tools: Tool[], sort: SortKey) {
   return [...tools].sort((a, b) => {
     if (sort === "updated") return new Date(b.last_update_date).getTime() - new Date(a.last_update_date).getTime();
@@ -54,7 +68,7 @@ export function sortTools(tools: Tool[], sort: SortKey) {
 
 export function matchesTool(tool: Tool, query: string, filters: string[]) {
   const q = query.trim().toLowerCase();
-  const haystack = [tool.tool_name, tool.editor_quote, tool.short_description, tool.full_description, tool.category, tool.sub_category, ...tool.tags, ...tool.recommended_use_cases].join(" ").toLowerCase();
+  const haystack = [tool.tool_name, tool.editor_quote, tool.short_description, tool.full_description, tool.category, tool.sub_category, ...(tool.category_paths ?? []), ...tool.tags, ...tool.recommended_use_cases].join(" ").toLowerCase();
   const queryOk = !q || haystack.includes(q);
   const filtersOk = filters.every((filter) => {
     if (filter === "한국어 지원") return tool.korean_support;

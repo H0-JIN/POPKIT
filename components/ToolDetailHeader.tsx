@@ -9,16 +9,18 @@ function MetaPill({ label, value }: { label: string; value: string }) {
 }
 
 export function ToolDetailHeader({ tool }: { tool: Tool }) {
+  const categoryPaths = tool.category_paths?.length ? tool.category_paths : [`${tool.category}/${tool.sub_category}`];
+
   return (
     <header className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.1] via-white/[0.04] to-cyan-300/[0.04] p-6 shadow-2xl shadow-black/20 sm:p-8">
       <div className="grid gap-7 lg:grid-cols-[1fr_260px] lg:items-start">
         <div className="flex min-w-0 flex-col gap-5 sm:flex-row">
           <div className="relative grid size-24 shrink-0 place-items-center overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-300 to-violet-500 text-3xl font-black text-zinc-950">{tool.logo_url ? <Image src={tool.logo_url} alt={`${tool.tool_name} logo`} fill className="object-cover" /> : tool.tool_name.slice(0, 2)}</div>
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap gap-2 text-xs font-semibold text-cyan-200"><span>{tool.category}</span><span>/</span><span>{tool.sub_category}</span></div>
+            <div className="flex flex-wrap gap-2 text-xs font-semibold text-cyan-200">{categoryPaths.slice(0, 4).map((path) => <span key={path} className="rounded-full bg-cyan-300/10 px-2.5 py-1">{path}</span>)}{categoryPaths.length > 4 ? <span className="rounded-full bg-white/5 px-2.5 py-1 text-zinc-400">+{categoryPaths.length - 4}</span> : null}</div>
             <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">{tool.tool_name}</h1>
-            {tool.editor_quote ? <p className="mt-4 max-w-3xl border-l-2 border-cyan-300/60 pl-4 text-lg font-semibold leading-8 text-cyan-100">“{tool.editor_quote}”</p> : null}
-            <p className="mt-4 max-w-3xl text-base leading-7 text-zinc-300">{tool.short_description}</p>
+            {tool.editor_quote ? <p className="mt-4 max-w-3xl text-xl font-black leading-8 text-cyan-100 sm:text-2xl">“{tool.editor_quote}”</p> : null}
+            <p className="mt-3 max-w-3xl text-base leading-7 text-zinc-300">{tool.short_description}</p>
             <div className="mt-5 flex flex-wrap items-center gap-2"><RatingBadge rating={tool.rating_average} count={tool.rating_count} /><span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-zinc-300">댓글 {tool.comment_count}</span><UpdateBadge date={tool.last_update_date} /></div>
           </div>
         </div>

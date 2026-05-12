@@ -10,9 +10,12 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   return { title: `${decoded} AI 툴 | ${SITE_NAME}`, description: `${decoded} 카테고리의 AI 툴 평점, 리뷰, 업데이트를 확인하세요.` };
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-  const { category } = await params;
+export default async function CategoryPage({ params, searchParams }: { params: Promise<{ category: string }>; searchParams: Promise<{ sub?: string }> }) {
+  const [{ category }, query] = await Promise.all([params, searchParams]);
   const decoded = decodeURIComponent(category);
+  const subCategory = query.sub ? decodeURIComponent(query.sub) : undefined;
   const tools = await getTools();
-  return <main className="flex min-h-screen"><Sidebar activeCategory={decoded} /><ToolExplorer tools={tools} category={decoded} title={`${decoded} AI 툴`} description={`${decoded} 직무와 업무 흐름에 맞는 AI 툴을 검색, 필터, 정렬로 비교하세요.`} /></main>;
+  const title = subCategory ? `${decoded} > ${subCategory} AI 툴` : `${decoded} AI 툴`;
+  const description = subCategory ? `${decoded}/${subCategory} 업무 흐름에 맞는 AI 툴을 검색, 필터, 정렬로 비교하세요.` : `${decoded} 직무와 업무 흐름에 맞는 AI 툴을 검색, 필터, 정렬로 비교하세요.`;
+  return <main className="flex min-h-screen"><Sidebar activeCategory={decoded} activeSubCategory={subCategory} /><ToolExplorer tools={tools} category={decoded} subCategory={subCategory} title={title} description={description} /></main>;
 }

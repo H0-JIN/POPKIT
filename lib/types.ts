@@ -6,6 +6,7 @@ export type Tool = {
   tool_name: string;
   category: string;
   sub_category: string;
+  category_paths: string[];
   tags: string[];
   short_description: string;
   editor_quote?: string;
