@@ -1,0 +1,34 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { getToolBySlug, getTools } from "@/lib/data/tools";
+import { getUpdatesByToolId } from "@/lib/data/updates";
+import { getReviewsByToolId } from "@/lib/data/reviews";
+import { SITE_NAME } from "@/lib/constants";
+import { ToolDetailHeader } from "@/components/ToolDetailHeader";
+import { ToolDetailTabs } from "@/components/ToolDetailTabs";
+
+export async function generateStaticParams() {
+  const tools = await getTools();
+  return tools.slice(0, 20).map((tool) => ({ slug: tool.slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const tool = await getToolBySlug(slug);
+  if (!tool) return { title: SITE_NAME };
+  return {
+    title: `${tool.tool_name} - 평점, 사용법, 업데이트 히스토리 | ${SITE_NAME}`,
+    description: `${tool.tool_name}의 주요 기능, 사용법 영상, 사용자 리뷰, 최신 업데이트를 확인하세요. ${tool.category}, ${tool.recommended_use_cases.join(", ")}`,
+    openGraph: { title: `${tool.tool_name} | ${SITE_NAME}`, description: tool.short_description, images: tool.image_url ? [tool.image_url] : undefined }
+  };
+}
+
+export default async function ToolDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const tool = await getToolBySlug(slug);
+  if (!tool) return notFound();
+  const currentTool = tool;
+  const [updates, reviews] = await Promise.all([getUpdatesByToolId(currentTool.tool_id), getReviewsByToolId(currentTool.tool_id)]);
+  return <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl"><Link href="/" className="mb-5 inline-flex text-sm font-semibold text-zinc-400 hover:text-cyan-200">← 목록으로</Link><ToolDetailHeader tool={currentTool} /><ToolDetailTabs tool={currentTool} updates={updates} reviews={reviews} /></div></main>;
+}
