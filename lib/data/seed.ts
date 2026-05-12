@@ -1,0 +1,105 @@
+import type { Review, Tool, ToolUpdate } from "@/lib/types";
+
+const base = {
+  logo_url: "",
+  image_url: "",
+  youtube_url: "",
+  youtube_summary: ["입력 자료와 목표를 먼저 정리합니다.", "초안 생성 후 사실 확인과 톤 조정을 진행합니다.", "반복 프롬프트로 실무 산출물 품질을 높입니다."],
+  is_featured: false,
+  main_features: ["초안 생성", "자료 요약", "워크플로우 자동화"],
+  pros: ["진입 장벽이 낮습니다.", "반복 업무 시간을 줄일 수 있습니다.", "다양한 직무에 적용하기 쉽습니다."],
+  cons: ["중요한 결과물은 검수가 필요합니다.", "요금제와 사용량 제한을 확인해야 합니다."],
+  alternatives: ["ChatGPT", "Claude", "Gemini"],
+};
+
+const rows: Array<Partial<Tool> & Pick<Tool, "tool_name" | "slug" | "category" | "sub_category" | "short_description" | "official_url">> = [
+  { tool_name: "ChatGPT", slug: "chatgpt", category: "기획", sub_category: "리서치", short_description: "리서치, 문서 작성, 아이디어 발산을 폭넓게 지원하는 범용 AI", official_url: "https://chatgpt.com", tags: ["리서치", "문서 작성", "자동화"], rating_average: 4.7, rating_count: 18240, comment_count: 846, popularity_score: 980, last_update_date: "2026-02-13", is_featured: true, youtube_url: "https://www.youtube.com/watch?v=JTxsNm9IdYU" },
+  { tool_name: "Claude", slug: "claude", category: "기획", sub_category: "문서 작성", short_description: "긴 문맥 처리와 문서 분석에 강한 대화형 AI 어시스턴트", official_url: "https://claude.ai", tags: ["문서 작성", "분석", "코딩"], rating_average: 4.6, rating_count: 12400, comment_count: 522, popularity_score: 820, last_update_date: "2026-02-05", is_featured: true },
+  { tool_name: "Perplexity", slug: "perplexity", category: "기획", sub_category: "리서치", short_description: "출처 기반 답변과 빠른 웹 리서치에 특화된 AI 검색 도구", official_url: "https://www.perplexity.ai", tags: ["리서치", "검색", "출처"], rating_average: 4.5, rating_count: 8410, comment_count: 308 },
+  { tool_name: "Gemini", slug: "gemini", category: "기획", sub_category: "리서치", short_description: "Google 생태계와 연동되는 멀티모달 AI", official_url: "https://gemini.google.com", tags: ["리서치", "멀티모달", "Google"] },
+  { tool_name: "NotebookLM", slug: "notebooklm", category: "기획", sub_category: "리서치", short_description: "업로드한 자료를 기반으로 요약, 질의응답, 오디오 개요를 만드는 연구 도구", official_url: "https://notebooklm.google.com", tags: ["리서치", "문서 요약", "노트"] },
+  { tool_name: "Genspark", slug: "genspark", category: "기획", sub_category: "리서치", short_description: "검색 결과를 구조화된 페이지와 리포트로 정리하는 AI 에이전트", official_url: "https://www.genspark.ai", tags: ["리서치", "에이전트", "리포트"] },
+  { tool_name: "Gamma", slug: "gamma", category: "기획", sub_category: "PPT/제안서", short_description: "텍스트 프롬프트로 발표자료와 문서를 빠르게 만드는 AI 프레젠테이션 도구", official_url: "https://gamma.app", tags: ["PPT", "문서", "제안서"] },
+  { tool_name: "Tome", slug: "tome", category: "기획", sub_category: "PPT/제안서", short_description: "스토리텔링 중심 발표자료와 세일즈 자료 제작을 돕는 AI", official_url: "https://tome.app", tags: ["PPT", "스토리텔링", "세일즈"] },
+  { tool_name: "Beautiful.ai", slug: "beautiful-ai", category: "기획", sub_category: "PPT/제안서", short_description: "브랜드 일관성을 유지하며 슬라이드 디자인을 자동 정돈하는 도구", official_url: "https://www.beautiful.ai", tags: ["PPT", "디자인", "브랜드"] },
+  { tool_name: "Napkin AI", slug: "napkin-ai", category: "기획", sub_category: "콘텐츠", short_description: "텍스트 아이디어를 다이어그램과 인포그래픽으로 전환하는 시각화 AI", official_url: "https://www.napkin.ai", tags: ["콘텐츠", "시각화", "다이어그램"] },
+  { tool_name: "Skywork", slug: "skywork", category: "기획", sub_category: "문서 작성", short_description: "방대한 자료를 정리해 리포트와 PPT 초안으로 변환하는 문서 제작 AI", official_url: "https://skywork.ai", tags: ["문서 작성", "PPT", "리서치"], rating_average: 4.5, rating_count: 2410, comment_count: 128 },
+  { tool_name: "Midjourney", slug: "midjourney", category: "디자인", sub_category: "이미지", short_description: "고품질 콘셉트 이미지와 아트워크 제작에 강한 이미지 생성 AI", official_url: "https://www.midjourney.com", tags: ["이미지", "콘셉트", "아트"] },
+  { tool_name: "DALL·E", slug: "dall-e", category: "디자인", sub_category: "이미지", short_description: "텍스트 기반 이미지 생성과 편집을 지원하는 OpenAI 이미지 도구", official_url: "https://openai.com/dall-e-3", tags: ["이미지", "편집", "OpenAI"] },
+  { tool_name: "Ideogram", slug: "ideogram", category: "디자인", sub_category: "이미지", short_description: "텍스트가 포함된 포스터와 브랜드 이미지를 만들기 좋은 이미지 생성 AI", official_url: "https://ideogram.ai", tags: ["이미지", "타이포", "브랜드"] },
+  { tool_name: "Recraft", slug: "recraft", category: "디자인", sub_category: "브랜드/그래픽", short_description: "벡터, 아이콘, 브랜드 그래픽 제작에 특화된 디자인 AI", official_url: "https://www.recraft.ai", tags: ["벡터", "아이콘", "브랜드"] },
+  { tool_name: "Canva AI", slug: "canva-ai", category: "디자인", sub_category: "브랜드/그래픽", short_description: "템플릿 기반 디자인 제작과 카피 생성을 결합한 올인원 디자인 도구", official_url: "https://www.canva.com/ai", tags: ["디자인", "템플릿", "콘텐츠"] },
+  { tool_name: "Figma AI", slug: "figma-ai", category: "디자인", sub_category: "UX/UI", short_description: "UI 초안, 레이어 검색, 디자인 워크플로우 보조를 제공하는 Figma 기능", official_url: "https://www.figma.com/ai", tags: ["UX/UI", "디자인 시스템", "협업"] },
+  { tool_name: "Adobe Firefly", slug: "adobe-firefly", category: "디자인", sub_category: "이미지", short_description: "Adobe 앱과 연동되는 상업 친화적 생성형 이미지 AI", official_url: "https://firefly.adobe.com", tags: ["이미지", "Adobe", "상업용"] },
+  { tool_name: "Runway", slug: "runway", category: "디자인", sub_category: "영상", short_description: "텍스트/이미지 기반 영상 생성과 편집을 지원하는 크리에이티브 AI", official_url: "https://runwayml.com", tags: ["영상", "모션", "편집"] },
+  { tool_name: "Kling", slug: "kling", category: "디자인", sub_category: "영상", short_description: "고품질 텍스트·이미지 투 비디오 생성을 제공하는 영상 AI", official_url: "https://klingai.com", tags: ["영상", "생성", "모션"] },
+  { tool_name: "Pika", slug: "pika", category: "디자인", sub_category: "영상", short_description: "짧은 소셜 영상과 실험적 모션 제작에 적합한 비디오 생성 AI", official_url: "https://pika.art", tags: ["영상", "소셜", "모션"] },
+  { tool_name: "Krea AI", slug: "krea-ai", category: "디자인", sub_category: "이미지", short_description: "실시간 이미지 생성과 업스케일링을 지원하는 비주얼 AI", official_url: "https://www.krea.ai", tags: ["이미지", "실시간", "업스케일"] },
+  { tool_name: "Freepik AI", slug: "freepik-ai", category: "디자인", sub_category: "이미지", short_description: "스톡 에셋과 AI 이미지 생성을 결합한 디자인 리소스 플랫폼", official_url: "https://www.freepik.com/ai", tags: ["이미지", "스톡", "리소스"] },
+  { tool_name: "Cursor", slug: "cursor", category: "개발", sub_category: "코드 작성", short_description: "AI 에이전트와 코드베이스 이해 기능을 갖춘 개발자용 에디터", official_url: "https://cursor.com", tags: ["코드 작성", "에이전트", "리팩토링"], rating_average: 4.6, rating_count: 11320, comment_count: 438, popularity_score: 770, last_update_date: "2025-06-04", is_featured: true },
+  { tool_name: "GitHub Copilot", slug: "github-copilot", category: "개발", sub_category: "코드 작성", short_description: "IDE와 GitHub 워크플로우에 통합되는 AI 코딩 어시스턴트", official_url: "https://github.com/features/copilot", tags: ["코드 작성", "IDE", "GitHub"] },
+  { tool_name: "OpenAI Codex", slug: "openai-codex", category: "개발", sub_category: "자동화", short_description: "코드 작성, 수정, 테스트 자동화를 지원하는 OpenAI 개발 에이전트", official_url: "https://openai.com/codex", tags: ["코딩 에이전트", "자동화", "리팩토링"] },
+  { tool_name: "Replit", slug: "replit", category: "개발", sub_category: "웹사이트 제작", short_description: "브라우저에서 아이디어를 앱으로 구현하는 AI 개발 환경", official_url: "https://replit.com", tags: ["웹사이트 제작", "IDE", "배포"] },
+  { tool_name: "Bolt.new", slug: "bolt-new", category: "개발", sub_category: "웹사이트 제작", short_description: "프롬프트로 풀스택 웹앱을 생성하고 편집하는 브라우저 기반 개발 도구", official_url: "https://bolt.new", tags: ["웹앱", "프로토타입", "프론트엔드"] },
+  { tool_name: "Lovable", slug: "lovable", category: "개발", sub_category: "웹사이트 제작", short_description: "자연어로 제품 MVP와 프론트엔드를 빠르게 만드는 AI 빌더", official_url: "https://lovable.dev", tags: ["MVP", "웹앱", "프로토타입"] },
+  { tool_name: "v0", slug: "v0", category: "개발", sub_category: "웹사이트 제작", short_description: "UI 프롬프트를 React/Next.js 코드로 변환하는 Vercel의 생성형 UI 도구", official_url: "https://v0.dev", tags: ["UI", "Next.js", "프로토타입"] },
+  { tool_name: "Windsurf", slug: "windsurf", category: "개발", sub_category: "코드 작성", short_description: "코드베이스 맥락을 이해하는 에이전틱 AI IDE", official_url: "https://windsurf.com", tags: ["IDE", "에이전트", "코드 작성"] },
+  { tool_name: "Devin", slug: "devin", category: "개발", sub_category: "자동화", short_description: "개발 과제를 계획, 구현, 검증하는 AI 소프트웨어 엔지니어", official_url: "https://devin.ai", tags: ["자동화", "에이전트", "개발"] },
+  { tool_name: "Codeium", slug: "codeium", category: "개발", sub_category: "코드 작성", short_description: "코드 자동완성과 채팅을 제공하는 개발자 생산성 AI", official_url: "https://codeium.com", tags: ["자동완성", "코드 작성", "생산성"] },
+  { tool_name: "Notion AI", slug: "notion-ai", category: "기타", sub_category: "생산성", short_description: "문서, 위키, 프로젝트 관리 공간에서 바로 쓰는 AI 작성 도구", official_url: "https://www.notion.com/product/ai", tags: ["생산성", "문서", "협업"] },
+  { tool_name: "Slack AI", slug: "slack-ai", category: "기타", sub_category: "협업", short_description: "대화 요약과 채널 검색을 지원하는 업무 커뮤니케이션 AI", official_url: "https://slack.com/features/ai", tags: ["협업", "요약", "검색"] },
+  { tool_name: "Zapier AI", slug: "zapier-ai", category: "기타", sub_category: "자동화", short_description: "앱 간 업무 자동화와 AI 에이전트를 연결하는 노코드 자동화 도구", official_url: "https://zapier.com/ai", tags: ["자동화", "노코드", "워크플로우"] },
+  { tool_name: "Make", slug: "make", category: "기타", sub_category: "자동화", short_description: "시각적 시나리오 빌더로 업무 프로세스를 자동화하는 플랫폼", official_url: "https://www.make.com", tags: ["자동화", "워크플로우", "노코드"] },
+  { tool_name: "ElevenLabs", slug: "elevenlabs", category: "기타", sub_category: "콘텐츠", short_description: "고품질 음성 합성과 더빙을 제공하는 오디오 생성 AI", official_url: "https://elevenlabs.io", tags: ["음성", "더빙", "콘텐츠"] },
+  { tool_name: "Suno", slug: "suno", category: "기타", sub_category: "콘텐츠", short_description: "프롬프트로 보컬과 반주가 포함된 음악을 생성하는 AI", official_url: "https://suno.com", tags: ["음악", "콘텐츠", "오디오"] },
+  { tool_name: "HeyGen", slug: "heygen", category: "기타", sub_category: "콘텐츠", short_description: "AI 아바타와 번역 더빙으로 마케팅 영상을 만드는 도구", official_url: "https://www.heygen.com", tags: ["영상", "아바타", "마케팅"] }
+];
+
+export const seedTools: Tool[] = rows.map((tool, index) => ({
+  ...base,
+  ...tool,
+  tool_id: `tool_${String(index + 1).padStart(3, "0")}`,
+  slug: tool.slug,
+  tool_name: tool.tool_name,
+  category: tool.category,
+  sub_category: tool.sub_category,
+  tags: tool.tags ?? [tool.sub_category, "AI"],
+  short_description: tool.short_description,
+  full_description: `${tool.tool_name}는 ${tool.short_description}입니다. 실무자는 기획, 제작, 검토 흐름에 맞춰 결과를 반복 개선할 수 있습니다.`,
+  recommended_use_cases: tool.tags?.slice(0, 3) ?? [tool.sub_category, "생산성"],
+  recommended_users: [tool.category === "개발" ? "개발자" : tool.category === "디자인" ? "디자이너" : "기획자", "초보자", "팀 리드"],
+  pricing: index % 5 === 0 ? "무료" : index % 3 === 0 ? "유료" : "부분 유료",
+  difficulty: index % 4 === 0 ? "초보자 추천" : index % 4 === 1 ? "중급" : "쉬움",
+  korean_support: index % 3 !== 1,
+  official_url: tool.official_url,
+  rating_average: tool.rating_average ?? Number((4.1 + (index % 7) * 0.1).toFixed(1)),
+  rating_count: tool.rating_count ?? 620 + index * 173,
+  comment_count: tool.comment_count ?? 24 + index * 11,
+  popularity_score: tool.popularity_score,
+  last_update_date: tool.last_update_date ?? `2025-${String((index % 9) + 1).padStart(2, "0")}-${String((index % 24) + 1).padStart(2, "0")}`,
+  created_at: `2025-${String((index % 8) + 1).padStart(2, "0")}-${String((index % 20) + 1).padStart(2, "0")}`,
+  is_featured: tool.is_featured ?? false,
+  youtube_url: tool.youtube_url ?? "",
+}));
+
+const id = (slug: string) => seedTools.find((tool) => tool.slug === slug)?.tool_id ?? slug;
+
+export const seedUpdates: ToolUpdate[] = [
+  { update_id: "upd_chatgpt_001", tool_id: id("chatgpt"), update_date: "2026-02-13", update_title: "ChatGPT 모델 제공 라인업 변경", update_summary: "OpenAI Help Center의 ChatGPT release notes 기준으로 일부 이전 모델의 ChatGPT 제공 종료가 안내되었습니다.", work_impact: "팀에서 고정 모델을 기준으로 만든 프롬프트와 평가 기준을 재검토해야 합니다.", recommended_users: "기획자, 개발자, 운영자", source_url: "https://help.openai.com/en/articles/6825453-chatgpt-release-notes", created_at: "2026-02-13" },
+  { update_id: "upd_chatgpt_002", tool_id: id("chatgpt"), update_date: "2025-04-16", update_title: "OpenAI o3 및 o4-mini 발표", update_summary: "OpenAI 공식 발표에서 o3, o4-mini 추론 모델을 소개했습니다.", work_impact: "복잡한 리서치, 분석, 코드 검토 업무에서 추론형 모델 선택지를 검토할 수 있습니다.", recommended_users: "기획자, 데이터 분석가, 개발자", source_url: "https://openai.com/index/introducing-o3-and-o4-mini/", created_at: "2025-04-16" },
+  { update_id: "upd_chatgpt_003", tool_id: id("chatgpt"), update_date: "2025-03-25", update_title: "이미지 생성 기능 업데이트", update_summary: "OpenAI 공식 발표에서 ChatGPT의 이미지 생성 경험 업데이트가 안내되었습니다.", work_impact: "콘텐츠 기획과 시안 제작 단계에서 텍스트-이미지 반복 작업을 한 화면에서 진행할 수 있습니다.", recommended_users: "기획자, 디자이너, 마케터", source_url: "https://openai.com/index/introducing-4o-image-generation/", created_at: "2025-03-25" },
+  { update_id: "upd_claude_001", tool_id: id("claude"), update_date: "2026-02-05", update_title: "Claude Opus 4.5 안내", update_summary: "Claude Help Center release notes에서 Claude Opus 4.5 출시 항목을 확인할 수 있습니다.", work_impact: "긴 문서 분석과 고난도 코드 검토 워크플로우의 모델 선택 기준을 갱신할 수 있습니다.", recommended_users: "기획자, 개발자, 리서처", source_url: "https://support.claude.com/en/articles/12138966-release-notes", created_at: "2026-02-05" },
+  { update_id: "upd_claude_002", tool_id: id("claude"), update_date: "2025-08-05", update_title: "Claude Opus 4.1 발표", update_summary: "Anthropic 공식 뉴스에서 Claude Opus 4.1을 Claude Opus 4 업데이트 모델로 발표했습니다.", work_impact: "멀티파일 리팩토링과 에이전트형 개발 업무에 Claude를 검토할 근거가 늘어났습니다.", recommended_users: "개발자, 테크 리드", source_url: "https://www.anthropic.com/news/claude-opus-4-1", created_at: "2025-08-05" },
+  { update_id: "upd_claude_003", tool_id: id("claude"), update_date: "2025-05-22", update_title: "Claude 4 공개", update_summary: "Anthropic 공식 뉴스에서 Claude Opus 4와 Claude Sonnet 4를 공개했습니다.", work_impact: "코딩, 문서 분석, 복잡한 에이전트 업무에서 Claude 4 계열 도입을 평가할 수 있습니다.", recommended_users: "개발자, 기획자, 리서처", source_url: "https://www.anthropic.com/news/claude-4", created_at: "2025-05-22" },
+  { update_id: "upd_cursor_001", tool_id: id("cursor"), update_date: "2025-06-04", update_title: "Cursor 1.0 출시", update_summary: "Cursor 공식 changelog에서 Bugbot, Background Agent, MCP 설치 등 1.0 기능을 안내했습니다.", work_impact: "코드 리뷰, 백그라운드 작업, 도구 연결을 IDE 안에서 더 빠르게 시도할 수 있습니다.", recommended_users: "개발자, 테크 리드", source_url: "https://cursor.com/changelog/1-0", created_at: "2025-06-04" },
+  { update_id: "upd_cursor_002", tool_id: id("cursor"), update_date: "2025-01-23", update_title: "Cursor changelog 항목 확인", update_summary: "Cursor 문서/체인지로그에서 자동 import와 안정성 개선 항목을 확인할 수 있습니다.", work_impact: "TypeScript 프로젝트에서 자동완성 후 import 정리 시간을 줄일 수 있습니다.", recommended_users: "프론트엔드 개발자", source_url: "https://cursor.com/changelog", created_at: "2025-01-23" },
+  { update_id: "upd_cursor_003", tool_id: id("cursor"), update_date: "2024-12-01", update_title: "공식 업데이트 출처 확인 필요", update_summary: "세부 업데이트 내용은 공식 changelog에서 확인 후 운영 데이터에 반영해야 합니다.", work_impact: "출처가 검증되기 전에는 카드 상세의 패치 요약으로 확정 노출하지 않는 것이 안전합니다.", recommended_users: "콘텐츠 운영자", source_url: "https://cursor.com/changelog", created_at: "2024-12-01" }
+];
+
+export const exampleReviews: Review[] = [
+  { review_id: "example_planner", tool_id: "example", user_role: "기획자", rating_total: 4.6, rating_work_usefulness: 4.7, rating_output_quality: 4.4, rating_difficulty: 4.5, rating_price: 4.2, rating_korean_support: 4.1, comment: "제안서 초안을 잡을 때 유용합니다. 단순 문장 작성보다 자료를 구조화하고 목차를 잡는 용도로 쓸 때 효율이 좋습니다.", helpful_count: 42, approved: true, created_at: "2025-01-02", isExample: true },
+  { review_id: "example_designer", tool_id: "example", user_role: "디자이너", rating_total: 4.3, rating_work_usefulness: 4.4, rating_output_quality: 4.1, rating_difficulty: 4.2, rating_price: 3.9, rating_korean_support: 4.0, comment: "이미지나 시안 제작 전에 레퍼런스를 정리하는 단계에서 도움이 됩니다. 다만 결과물은 그대로 쓰기보다 후가공이 필요합니다.", helpful_count: 31, approved: true, created_at: "2025-01-03", isExample: true },
+  { review_id: "example_developer", tool_id: "example", user_role: "개발자", rating_total: 4.5, rating_work_usefulness: 4.6, rating_output_quality: 4.3, rating_difficulty: 4.4, rating_price: 4.0, rating_korean_support: 3.8, comment: "초기 코드 작성보다 기존 코드 이해, 오류 원인 파악, 간단한 리팩토링에 활용할 때 만족도가 높았습니다.", helpful_count: 38, approved: true, created_at: "2025-01-04", isExample: true }
+];
+
+export const seedReviews: Review[] = [];

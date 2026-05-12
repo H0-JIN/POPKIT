@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #09090b; color: #f4f4f5; }
+a { text-decoration: none; }
+::selection { background: rgba(103, 232, 249, .35); }
