@@ -1,0 +1,23 @@
+import Link from "next/link";
+import { NAVIGATION } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+
+export function Sidebar({ activeCategory }: { activeCategory?: string }) {
+  return (
+    <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-white/10 bg-zinc-950/80 px-5 py-6 backdrop-blur lg:block">
+      <Link href="/" className="mb-8 flex items-center gap-3">
+        <span className="grid size-10 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 font-black text-zinc-950">AI</span>
+        <span><strong className="block text-lg">AI Tool Archive</strong><span className="text-xs text-zinc-500">Curated for makers</span></span>
+      </Link>
+      <nav className="space-y-5">
+        {NAVIGATION.map((item) => (
+          <div key={item.label}>
+            <Link href={item.href} className={cn("flex rounded-2xl px-3 py-2 text-sm font-semibold text-zinc-300 hover:bg-white/5 hover:text-white", activeCategory === item.label && "bg-white/10 text-white")}>{item.label}</Link>
+            {item.children.length > 0 && <div className="mt-2 space-y-1 pl-3">{item.children.map((child) => <Link key={child} href={`${item.href}?sub=${encodeURIComponent(child)}`} className="block rounded-xl px-3 py-1.5 text-sm text-zinc-500 hover:bg-white/5 hover:text-zinc-200">{child}</Link>)}</div>}
+          </div>
+        ))}
+      </nav>
+      <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-4 text-sm text-zinc-400">공식 출처가 확인된 업데이트만 히스토리에 반영합니다.</div>
+    </aside>
+  );
+}
