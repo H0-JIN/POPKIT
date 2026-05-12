@@ -8,6 +8,7 @@ export type Tool = {
   sub_category: string;
   category_paths: string[];
   tags: string[];
+  use_tags: string[];
   short_description: string;
   editor_quote?: string;
   full_description: string;

@@ -98,6 +98,29 @@ const editorQuotes: Record<string, string> = {
   heygen: "촬영 없이, 사람을 말하게 한다."
 };
 
+
+function normalizeSeedUseTag(text: string) {
+  const normalized = text.trim().toLowerCase();
+  if (!normalized) return "";
+  if (/리서치|조사|검색|자료|출처/.test(normalized)) return "리서치";
+  if (/문서|글|작성|요약|번역|보고서|노트|카피/.test(normalized)) return "문서 작성";
+  if (/ppt|발표|제안서|슬라이드|프레젠테이션/.test(normalized)) return "PPT";
+  if (/이미지|사진|그림|일러스트|아트|비주얼|포스터/.test(normalized)) return "이미지 생성";
+  if (/영상|동영상|비디오|모션|더빙|아바타/.test(normalized)) return "영상 생성";
+  if (/자동화|워크플로우|에이전트/.test(normalized)) return "자동화";
+  if (/코드|개발|프로그래밍|코딩|디버그|버그|ide|앱|웹사이트/.test(normalized)) return "코드 작성";
+  if (/데이터|분석|스프레드시트|엑셀/.test(normalized)) return "데이터 분석";
+  if (/콘텐츠|마케팅|sns|블로그|세일즈|스토리텔링|음악|작곡/.test(normalized)) return "콘텐츠 제작";
+  if (/협업|회의|팀/.test(normalized)) return "협업";
+  if (/디자인|브랜드|그래픽|ux|ui|로고|템플릿|벡터|프로토타입/.test(normalized)) return "디자인";
+  if (/음성|목소리|보이스|오디오/.test(normalized)) return "음성 생성";
+  return text.trim();
+}
+
+function normalizeSeedUseTags(tags: string[]) {
+  return Array.from(new Set(tags.map(normalizeSeedUseTag).filter(Boolean))).slice(0, 3);
+}
+
 const categoryPathsBySlug: Record<string, string[]> = {
   chatgpt: ["기획/리서치", "기획/문서 작성", "기획/콘텐츠", "개발/코드 작성"],
   claude: ["기획/리서치", "기획/문서 작성", "개발/코드 작성"],
@@ -151,6 +174,7 @@ export const seedTools: Tool[] = rows.map((tool, index) => ({
   sub_category: tool.sub_category,
   category_paths: tool.category_paths ?? categoryPathsBySlug[tool.slug] ?? [`${tool.category}/${tool.sub_category}`],
   tags: tool.tags ?? [tool.sub_category, "AI"],
+  use_tags: normalizeSeedUseTags(tool.use_tags ?? tool.tags ?? [tool.sub_category, "AI"]),
   short_description: tool.short_description,
   editor_quote: tool.editor_quote ?? editorQuotes[tool.slug] ?? "",
   full_description: `${tool.tool_name}는 ${tool.short_description}입니다. 실무자는 기획, 제작, 검토 흐름에 맞춰 결과를 반복 개선할 수 있습니다.`,
