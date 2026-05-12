@@ -13,7 +13,7 @@ const aliases: Record<string, string[]> = {
   legacy_category: ["legacy_category", "카테고리"],
   legacy_usage_tags: ["legacy_usage_tags", "활용"],
   tags: ["tags", "태그"],
-  use_tags: ["use_tags", "usage_tags", "활용 태그", "사용 태그", "업무 태그", "활용"],
+  use_tags: ["use_tags", "활용 태그", "사용 태그", "업무 태그", "usage_tags", "활용"],
   category_paths: ["category_paths", "categories", "분류", "복수 분류", "카테고리 경로"],
   editor_quote: ["editor_quote", "one_liner", "editor_one_liner", "에디터 한줄평", "한줄평"],
   short_description: ["short_description", "description", "설명", "한 줄 설명"],
@@ -52,6 +52,32 @@ const subCategoriesByTop: Record<string, string[]> = {
   기타: ["생산성", "협업", "데이터 분석"]
 };
 
+const canonicalUseTags = ["리서치", "문서 작성", "PPT", "이미지 생성", "영상 생성", "자동화", "코드 작성", "데이터 분석", "콘텐츠 제작", "협업", "디자인", "음성 생성"] as const;
+
+function normalizeUseTag(text: string) {
+  const normalized = text.trim().toLowerCase();
+  if (!normalized) return "";
+  if (/리서치|조사|검색|자료|출처|research/.test(normalized)) return "리서치";
+  if (/문서|글|작성|요약|번역|보고서|노트|카피|document|writing/.test(normalized)) return "문서 작성";
+  if (/ppt|발표|제안서|슬라이드|프레젠테이션|presentation/.test(normalized)) return "PPT";
+  if (/이미지|image|사진|그림|일러스트|아트|비주얼|포스터/.test(normalized)) return "이미지 생성";
+  if (/영상|video|동영상|비디오|모션|더빙|아바타/.test(normalized)) return "영상 생성";
+  if (/자동화|워크플로우|업무 자동|에이전트|agent|automation/.test(normalized)) return "자동화";
+  if (/코드|개발|프로그래밍|코딩|debug|디버그|버그|ide|앱|웹사이트/.test(normalized)) return "코드 작성";
+  if (/데이터|분석|스프레드시트|엑셀|analytics/.test(normalized)) return "데이터 분석";
+  if (/콘텐츠|마케팅|sns|블로그|세일즈|스토리텔링|음악|작곡/.test(normalized)) return "콘텐츠 제작";
+  if (/협업|회의|팀|slack|공유/.test(normalized)) return "협업";
+  if (/디자인|브랜드|그래픽|ux|ui|로고|템플릿|벡터|프로토타입/.test(normalized)) return "디자인";
+  if (/음성|목소리|보이스|voice|오디오/.test(normalized)) return "음성 생성";
+  return "";
+}
+
+function normalizeUseTags(...sources: string[][]) {
+  const normalized = sources.flat().map(normalizeUseTag).filter(Boolean);
+  const unknown = sources.flat().map((tag) => tag.trim()).filter((tag) => tag && !normalizeUseTag(tag) && !topCategories.includes(tag) && !Object.values(subCategoriesByTop).flat().includes(tag));
+  return unique([...normalized, ...unknown]).filter((tag) => canonicalUseTags.includes(tag as (typeof canonicalUseTags)[number]) || unknown.includes(tag));
+}
+
 const defaultUsageSteps = [
   "작업 목적과 필요한 입력 자료를 먼저 정리합니다.",
   "원하는 결과 형식과 톤, 분량을 구체적으로 요청합니다.",
@@ -62,31 +88,6 @@ const defaultCautions = [
   "중요한 결과물은 공개 전 사실 관계와 저작권 이슈를 확인해야 합니다.",
   "요금제와 사용량 제한은 공식 사이트에서 최신 정보를 확인하는 것이 안전합니다."
 ];
-
-const useTagRules: Array<[RegExp, string]> = [
-  [/리서치|조사|검색|자료|출처|research/i, "리서치"],
-  [/문서|글|작성|요약|번역|보고서|노트|카피|document|writing/i, "문서 작성"],
-  [/ppt|발표|제안서|슬라이드|프레젠테이션|presentation/i, "PPT"],
-  [/이미지|image|사진|그림|일러스트|아트|비주얼|포스터/i, "이미지 생성"],
-  [/영상|video|동영상|비디오|모션|더빙|아바타/i, "영상 생성"],
-  [/자동화|워크플로우|업무 자동|에이전트|agent|automation/i, "자동화"],
-  [/코드|개발|프로그래밍|코딩|debug|디버그|버그|ide|앱|웹사이트/i, "코드 작성"],
-  [/데이터|분석|스프레드시트|엑셀|analytics/i, "데이터 분석"],
-  [/콘텐츠|마케팅|sns|블로그|세일즈|스토리텔링|음악|작곡/i, "콘텐츠 제작"],
-  [/협업|회의|팀|slack|공유/i, "협업"],
-  [/디자인|브랜드|그래픽|ux|ui|로고|템플릿|벡터|프로토타입/i, "디자인"],
-  [/음성|목소리|보이스|voice|오디오/i, "음성 생성"]
-];
-
-function normalizeUseTag(text: string) {
-  const trimmed = text.trim();
-  if (!trimmed) return "";
-  return useTagRules.find(([pattern]) => pattern.test(trimmed))?.[1] ?? trimmed;
-}
-
-function normalizeUseTags(...sources: string[][]) {
-  return unique(sources.flat().map(normalizeUseTag).filter((tag) => tag && !topCategories.includes(tag))).slice(0, 5);
-}
 
 function categoryTone(category: string) {
   if (category === "개발") return { users: ["개발자", "테크 리드", "프로덕트 메이커"], strengths: ["반복적인 구현과 검토 시간을 줄이는 데 도움이 됩니다.", "코드나 작업 맥락을 바탕으로 다음 행동을 빠르게 정리할 수 있습니다."], work: "개발 흐름" };
@@ -129,6 +130,7 @@ function fallbackUseCases(useTags: string[], subCategory: string) {
 function fallbackYoutubeSummary(name: string, usageSteps: string[]) {
   return usageSteps.length ? usageSteps : [`${name}에 넣을 자료와 목표를 먼저 준비합니다.`, "원하는 결과 형식을 구체적으로 요청합니다.", "결과를 검토하고 필요한 부분을 다시 요청합니다."];
 }
+
 
 function value(row: SheetRow, key: string) {
   return aliases[key].map((name) => row[name]).find(Boolean)?.trim() ?? "";
@@ -305,7 +307,7 @@ function adapt(row: SheetRow, index: number): Tool | null {
   const rawTags = list(value(row, "tags"));
   const rawUseTags = list(value(row, "use_tags"));
   const tags = unique([...rawTags, ...list(legacyUsageTags)]);
-  const useTags = normalizeUseTags(rawUseTags, list(legacyUsageTags), rawTags, seed?.use_tags ?? [], seed?.tags ?? [], [subCategory]);
+  const useTags = normalizeUseTags(rawUseTags, list(legacyUsageTags), rawTags, seed?.use_tags ?? [], seed?.tags ?? []);
   const recommendedUseCases = list(value(row, "recommended_use_cases"));
   const recommendedUsers = list(value(row, "recommended_users"));
   const usageSteps = list(value(row, "usage_steps"));
@@ -330,7 +332,7 @@ function adapt(row: SheetRow, index: number): Tool | null {
     sub_category: subCategory,
     category_paths: categoryPaths(value(row, "category_paths"), category, subCategory, legacyCategoryPaths, seed?.category_paths),
     tags: tags.length ? tags : seed?.tags ?? [],
-    use_tags: useTags,
+    use_tags: useTags.length ? useTags : seed?.use_tags ?? normalizeUseTags(seed?.tags ?? [], [subCategory]),
     short_description: shortDescription,
     editor_quote: value(row, "editor_quote") || seed?.editor_quote || fallbackQuote(name, useTags),
     full_description: value(row, "full_description") || seed?.full_description || fallbackFullDescription(name, category, subCategory, shortDescription),

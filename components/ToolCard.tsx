@@ -12,7 +12,6 @@ export function ToolCard({ tool }: { tool: Tool }) {
     <Link href={`/tools/${tool.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-zinc-900/70 shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-zinc-900">
       <div className={`relative h-40 bg-gradient-to-br ${gradients[tool.category] ?? gradients["기타"]}`}>
         {tool.image_url ? <Image src={tool.image_url} alt="" fill className="object-cover" /> : <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,.7),transparent_26%),linear-gradient(135deg,rgba(0,0,0,.08)_25%,transparent_25%,transparent_50%,rgba(0,0,0,.08)_50%,rgba(0,0,0,.08)_75%,transparent_75%)] bg-[length:100%_100%,26px_26px]" />}
-        <div className="absolute bottom-4 left-4 rounded-2xl bg-zinc-950/75 px-3 py-2 text-sm font-bold backdrop-blur">{tool.tool_name}</div>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>

@@ -8,7 +8,7 @@ export const NAVIGATION = [
 ];
 
 export const SORT_OPTIONS = [
-  { value: "popular", label: "인기순" },
+  { value: "popular", label: "추천순" },
   { value: "updated", label: "최신 업데이트순" },
   { value: "rating", label: "평점순" },
   { value: "comments", label: "댓글 많은 순" },
