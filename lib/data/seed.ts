@@ -5,6 +5,7 @@ const base = {
   image_url: "",
   youtube_url: "",
   youtube_summary: ["입력 자료와 목표를 먼저 정리합니다.", "초안 생성 후 사실 확인과 톤 조정을 진행합니다.", "반복 프롬프트로 실무 산출물 품질을 높입니다."],
+  usage_steps: ["작업 목적과 필요한 입력 자료를 먼저 정리합니다.", "원하는 결과 형식과 톤, 분량을 구체적으로 요청합니다.", "생성 결과를 검토하고 사실 확인이나 후속 수정을 진행합니다."],
   is_featured: false,
   main_features: ["초안 생성", "자료 요약", "워크플로우 자동화"],
   pros: ["진입 장벽이 낮습니다.", "반복 업무 시간을 줄일 수 있습니다.", "다양한 직무에 적용하기 쉽습니다."],
@@ -13,9 +14,9 @@ const base = {
 };
 
 const rows: Array<Partial<Tool> & Pick<Tool, "tool_name" | "slug" | "category" | "sub_category" | "short_description" | "official_url">> = [
-  { tool_name: "ChatGPT", slug: "chatgpt", category: "기획", sub_category: "리서치", short_description: "리서치, 문서 작성, 아이디어 발산을 폭넓게 지원하는 범용 AI", official_url: "https://chatgpt.com", tags: ["리서치", "문서 작성", "자동화"], rating_average: 4.7, rating_count: 18240, comment_count: 846, popularity_score: 980, last_update_date: "2026-02-13", is_featured: true, youtube_url: "https://www.youtube.com/watch?v=JTxsNm9IdYU" },
-  { tool_name: "Claude", slug: "claude", category: "기획", sub_category: "문서 작성", short_description: "긴 문맥 처리와 문서 분석에 강한 대화형 AI 어시스턴트", official_url: "https://claude.ai", tags: ["문서 작성", "분석", "코딩"], rating_average: 4.6, rating_count: 12400, comment_count: 522, popularity_score: 820, last_update_date: "2026-02-05", is_featured: true },
-  { tool_name: "Perplexity", slug: "perplexity", category: "기획", sub_category: "리서치", short_description: "출처 기반 답변과 빠른 웹 리서치에 특화된 AI 검색 도구", official_url: "https://www.perplexity.ai", tags: ["리서치", "검색", "출처"], rating_average: 4.5, rating_count: 8410, comment_count: 308 },
+  { tool_name: "ChatGPT", slug: "chatgpt", category: "기획", sub_category: "리서치", short_description: "리서치, 문서 작성, 아이디어 발산을 폭넓게 지원하는 범용 AI", official_url: "https://chatgpt.com", tags: ["리서치", "문서 작성", "자동화"], popularity_score: 980, last_update_date: "2026-02-13", is_featured: true, youtube_url: "https://www.youtube.com/watch?v=JTxsNm9IdYU" },
+  { tool_name: "Claude", slug: "claude", category: "기획", sub_category: "문서 작성", short_description: "긴 문맥 처리와 문서 분석에 강한 대화형 AI 어시스턴트", official_url: "https://claude.ai", tags: ["문서 작성", "분석", "코딩"], popularity_score: 820, last_update_date: "2026-02-05", is_featured: true },
+  { tool_name: "Perplexity", slug: "perplexity", category: "기획", sub_category: "리서치", short_description: "출처 기반 답변과 빠른 웹 리서치에 특화된 AI 검색 도구", official_url: "https://www.perplexity.ai", tags: ["리서치", "검색", "출처"] },
   { tool_name: "Gemini", slug: "gemini", category: "기획", sub_category: "리서치", short_description: "Google 생태계와 연동되는 멀티모달 AI", official_url: "https://gemini.google.com", tags: ["리서치", "멀티모달", "Google"] },
   { tool_name: "NotebookLM", slug: "notebooklm", category: "기획", sub_category: "리서치", short_description: "업로드한 자료를 기반으로 요약, 질의응답, 오디오 개요를 만드는 연구 도구", official_url: "https://notebooklm.google.com", tags: ["리서치", "문서 요약", "노트"] },
   { tool_name: "Genspark", slug: "genspark", category: "기획", sub_category: "리서치", short_description: "검색 결과를 구조화된 페이지와 리포트로 정리하는 AI 에이전트", official_url: "https://www.genspark.ai", tags: ["리서치", "에이전트", "리포트"] },
@@ -23,7 +24,7 @@ const rows: Array<Partial<Tool> & Pick<Tool, "tool_name" | "slug" | "category" |
   { tool_name: "Tome", slug: "tome", category: "기획", sub_category: "PPT/제안서", short_description: "스토리텔링 중심 발표자료와 세일즈 자료 제작을 돕는 AI", official_url: "https://tome.app", tags: ["PPT", "스토리텔링", "세일즈"] },
   { tool_name: "Beautiful.ai", slug: "beautiful-ai", category: "기획", sub_category: "PPT/제안서", short_description: "브랜드 일관성을 유지하며 슬라이드 디자인을 자동 정돈하는 도구", official_url: "https://www.beautiful.ai", tags: ["PPT", "디자인", "브랜드"] },
   { tool_name: "Napkin AI", slug: "napkin-ai", category: "기획", sub_category: "콘텐츠", short_description: "텍스트 아이디어를 다이어그램과 인포그래픽으로 전환하는 시각화 AI", official_url: "https://www.napkin.ai", tags: ["콘텐츠", "시각화", "다이어그램"] },
-  { tool_name: "Skywork", slug: "skywork", category: "기획", sub_category: "문서 작성", short_description: "방대한 자료를 정리해 리포트와 PPT 초안으로 변환하는 문서 제작 AI", official_url: "https://skywork.ai", tags: ["문서 작성", "PPT", "리서치"], rating_average: 4.5, rating_count: 2410, comment_count: 128 },
+  { tool_name: "Skywork", slug: "skywork", category: "기획", sub_category: "문서 작성", short_description: "방대한 자료를 정리해 리포트와 PPT 초안으로 변환하는 문서 제작 AI", official_url: "https://skywork.ai", tags: ["문서 작성", "PPT", "리서치"] },
   { tool_name: "Midjourney", slug: "midjourney", category: "디자인", sub_category: "이미지", short_description: "고품질 콘셉트 이미지와 아트워크 제작에 강한 이미지 생성 AI", official_url: "https://www.midjourney.com", tags: ["이미지", "콘셉트", "아트"] },
   { tool_name: "DALL·E", slug: "dall-e", category: "디자인", sub_category: "이미지", short_description: "텍스트 기반 이미지 생성과 편집을 지원하는 OpenAI 이미지 도구", official_url: "https://openai.com/dall-e-3", tags: ["이미지", "편집", "OpenAI"] },
   { tool_name: "Ideogram", slug: "ideogram", category: "디자인", sub_category: "이미지", short_description: "텍스트가 포함된 포스터와 브랜드 이미지를 만들기 좋은 이미지 생성 AI", official_url: "https://ideogram.ai", tags: ["이미지", "타이포", "브랜드"] },
@@ -36,7 +37,7 @@ const rows: Array<Partial<Tool> & Pick<Tool, "tool_name" | "slug" | "category" |
   { tool_name: "Pika", slug: "pika", category: "디자인", sub_category: "영상", short_description: "짧은 소셜 영상과 실험적 모션 제작에 적합한 비디오 생성 AI", official_url: "https://pika.art", tags: ["영상", "소셜", "모션"] },
   { tool_name: "Krea AI", slug: "krea-ai", category: "디자인", sub_category: "이미지", short_description: "실시간 이미지 생성과 업스케일링을 지원하는 비주얼 AI", official_url: "https://www.krea.ai", tags: ["이미지", "실시간", "업스케일"] },
   { tool_name: "Freepik AI", slug: "freepik-ai", category: "디자인", sub_category: "이미지", short_description: "스톡 에셋과 AI 이미지 생성을 결합한 디자인 리소스 플랫폼", official_url: "https://www.freepik.com/ai", tags: ["이미지", "스톡", "리소스"] },
-  { tool_name: "Cursor", slug: "cursor", category: "개발", sub_category: "코드 작성", short_description: "AI 에이전트와 코드베이스 이해 기능을 갖춘 개발자용 에디터", official_url: "https://cursor.com", tags: ["코드 작성", "에이전트", "리팩토링"], rating_average: 4.6, rating_count: 11320, comment_count: 438, popularity_score: 770, last_update_date: "2025-06-04", is_featured: true },
+  { tool_name: "Cursor", slug: "cursor", category: "개발", sub_category: "코드 작성", short_description: "AI 에이전트와 코드베이스 이해 기능을 갖춘 개발자용 에디터", official_url: "https://cursor.com", tags: ["코드 작성", "에이전트", "리팩토링"], popularity_score: 770, last_update_date: "2025-06-04", is_featured: true },
   { tool_name: "GitHub Copilot", slug: "github-copilot", category: "개발", sub_category: "코드 작성", short_description: "IDE와 GitHub 워크플로우에 통합되는 AI 코딩 어시스턴트", official_url: "https://github.com/features/copilot", tags: ["코드 작성", "IDE", "GitHub"] },
   { tool_name: "OpenAI Codex", slug: "openai-codex", category: "개발", sub_category: "자동화", short_description: "코드 작성, 수정, 테스트 자동화를 지원하는 OpenAI 개발 에이전트", official_url: "https://openai.com/codex", tags: ["코딩 에이전트", "자동화", "리팩토링"] },
   { tool_name: "Replit", slug: "replit", category: "개발", sub_category: "웹사이트 제작", short_description: "브라우저에서 아이디어를 앱으로 구현하는 AI 개발 환경", official_url: "https://replit.com", tags: ["웹사이트 제작", "IDE", "배포"] },
@@ -98,6 +99,50 @@ const editorQuotes: Record<string, string> = {
   heygen: "촬영 없이, 사람을 말하게 한다."
 };
 
+
+function normalizeSeedUseTag(text: string) {
+  const normalized = text.trim().toLowerCase();
+  if (!normalized) return "";
+  if (/리서치|조사|검색|자료|출처/.test(normalized)) return "리서치";
+  if (/문서|글|작성|요약|번역|보고서|노트|카피/.test(normalized)) return "문서 작성";
+  if (/ppt|발표|제안서|슬라이드|프레젠테이션/.test(normalized)) return "PPT";
+  if (/이미지|사진|그림|일러스트|아트|비주얼|포스터/.test(normalized)) return "이미지 생성";
+  if (/영상|동영상|비디오|모션|더빙|아바타/.test(normalized)) return "영상 생성";
+  if (/자동화|워크플로우|에이전트/.test(normalized)) return "자동화";
+  if (/코드|개발|프로그래밍|코딩|디버그|버그|ide|앱|웹사이트/.test(normalized)) return "코드 작성";
+  if (/데이터|분석|스프레드시트|엑셀/.test(normalized)) return "데이터 분석";
+  if (/콘텐츠|마케팅|sns|블로그|세일즈|스토리텔링|음악|작곡/.test(normalized)) return "콘텐츠 제작";
+  if (/협업|회의|팀/.test(normalized)) return "협업";
+  if (/디자인|브랜드|그래픽|ux|ui|로고|템플릿|벡터|프로토타입/.test(normalized)) return "디자인";
+  if (/음성|목소리|보이스|오디오/.test(normalized)) return "음성 생성";
+  return text.trim();
+}
+
+function normalizeSeedUseTags(tags: string[]) {
+  return Array.from(new Set(tags.map(normalizeSeedUseTag).filter(Boolean))).slice(0, 3);
+}
+
+function seedFullDescription(tool: Pick<Tool, "tool_name" | "short_description" | "category" | "sub_category">) {
+  const workflow = tool.category === "개발" ? "개발과 검토 흐름" : tool.category === "디자인" ? "시각 제작 흐름" : tool.category === "기획" ? "기획과 문서화 흐름" : "업무 생산성 흐름";
+  return `${tool.tool_name}는 ${tool.short_description}입니다. ${workflow}에서 초안 작성, 정리, 반복 수정처럼 시간이 오래 걸리는 단계를 줄이는 데 유용합니다. 최종 산출물은 목적과 맥락에 맞게 검토한 뒤 활용하는 것이 좋습니다.`;
+}
+
+function fallbackUsageSteps(toolName: string, category: string, useTags: string[]) {
+  if (useTags.includes("코드 작성") || category === "개발") {
+    return ["작업할 저장소나 코드 범위를 정리합니다.", "수정 목표와 제약 조건을 구체적으로 요청합니다.", "제안된 코드와 변경 이유를 검토한 뒤 테스트합니다."];
+  }
+  if (useTags.includes("이미지 생성") || useTags.includes("영상 생성") || category === "디자인") {
+    return ["원하는 분위기와 참고 스타일을 먼저 정리합니다.", "크기, 형식, 톤처럼 결과물 조건을 함께 입력합니다.", "생성 결과를 비교하고 필요한 요소를 추가 수정합니다."];
+  }
+  if (useTags.includes("리서치")) {
+    return ["조사 주제와 확인해야 할 질문을 정리합니다.", "출처나 비교 기준을 함께 요청합니다.", "응답의 근거를 확인하고 필요한 내용을 다시 좁혀 질문합니다."];
+  }
+  if (useTags.includes("PPT")) {
+    return ["발표 목적과 청중, 핵심 메시지를 준비합니다.", "슬라이드 목차나 페이지별 역할을 요청합니다.", "생성된 구조를 실제 자료와 브랜드 톤에 맞게 다듬습니다."];
+  }
+  return [`${toolName}로 처리할 업무 목표를 먼저 정리합니다.`, "원하는 결과 형식과 톤, 분량을 구체적으로 요청합니다.", "생성 결과를 검토하고 사실 확인이나 후속 수정을 진행합니다."];
+}
+
 const categoryPathsBySlug: Record<string, string[]> = {
   chatgpt: ["기획/리서치", "기획/문서 작성", "기획/콘텐츠", "개발/코드 작성"],
   claude: ["기획/리서치", "기획/문서 작성", "개발/코드 작성"],
@@ -141,34 +186,42 @@ const categoryPathsBySlug: Record<string, string[]> = {
   heygen: ["디자인/영상", "기획/콘텐츠"]
 };
 
-export const seedTools: Tool[] = rows.map((tool, index) => ({
-  ...base,
-  ...tool,
-  tool_id: `tool_${String(index + 1).padStart(3, "0")}`,
-  slug: tool.slug,
-  tool_name: tool.tool_name,
-  category: tool.category,
-  sub_category: tool.sub_category,
-  category_paths: tool.category_paths ?? categoryPathsBySlug[tool.slug] ?? [`${tool.category}/${tool.sub_category}`],
-  tags: tool.tags ?? [tool.sub_category, "AI"],
-  short_description: tool.short_description,
-  editor_quote: tool.editor_quote ?? editorQuotes[tool.slug] ?? "",
-  full_description: `${tool.tool_name}는 ${tool.short_description}입니다. 실무자는 기획, 제작, 검토 흐름에 맞춰 결과를 반복 개선할 수 있습니다.`,
-  recommended_use_cases: tool.tags?.slice(0, 3) ?? [tool.sub_category, "생산성"],
-  recommended_users: [tool.category === "개발" ? "개발자" : tool.category === "디자인" ? "디자이너" : "기획자", "초보자", "팀 리드"],
-  pricing: index % 5 === 0 ? "무료" : index % 3 === 0 ? "유료" : "부분 유료",
-  difficulty: index % 4 === 0 ? "초보자 추천" : index % 4 === 1 ? "중급" : "쉬움",
-  korean_support: index % 3 !== 1,
-  official_url: tool.official_url,
-  rating_average: tool.rating_average ?? Number((4.1 + (index % 7) * 0.1).toFixed(1)),
-  rating_count: tool.rating_count ?? 620 + index * 173,
-  comment_count: tool.comment_count ?? 24 + index * 11,
-  popularity_score: tool.popularity_score,
-  last_update_date: tool.last_update_date ?? `2025-${String((index % 9) + 1).padStart(2, "0")}-${String((index % 24) + 1).padStart(2, "0")}`,
-  created_at: `2025-${String((index % 8) + 1).padStart(2, "0")}-${String((index % 20) + 1).padStart(2, "0")}`,
-  is_featured: tool.is_featured ?? false,
-  youtube_url: tool.youtube_url ?? "",
-}));
+export const seedTools: Tool[] = rows.map((tool, index) => {
+  const useTags = normalizeSeedUseTags(tool.use_tags ?? tool.tags ?? [tool.sub_category, "AI"]);
+
+  return {
+    ...base,
+    ...tool,
+    tool_id: `tool_${String(index + 1).padStart(3, "0")}`,
+    slug: tool.slug,
+    tool_name: tool.tool_name,
+    category: tool.category,
+    sub_category: tool.sub_category,
+    category_paths: tool.category_paths ?? categoryPathsBySlug[tool.slug] ?? [`${tool.category}/${tool.sub_category}`],
+    tags: tool.tags ?? [tool.sub_category, "AI"],
+    use_tags: useTags,
+    usage_steps: tool.usage_steps ?? fallbackUsageSteps(tool.tool_name, tool.category, useTags),
+    short_description: tool.short_description,
+    editor_quote: tool.editor_quote ?? editorQuotes[tool.slug] ?? "",
+    full_description: tool.full_description ?? seedFullDescription(tool),
+    recommended_use_cases: tool.recommended_use_cases ?? tool.tags?.slice(0, 3) ?? [tool.sub_category, "생산성"],
+    recommended_users: [tool.category === "개발" ? "개발자" : tool.category === "디자인" ? "디자이너" : "기획자", "초보자", "팀 리드"],
+    pricing: index % 5 === 0 ? "무료" : index % 3 === 0 ? "유료" : "부분 유료",
+    difficulty: index % 4 === 0 ? "초보자 추천" : index % 4 === 1 ? "중급" : "쉬움",
+    korean_support: index % 3 !== 1,
+    official_url: tool.official_url,
+    rating_average: 0,
+    rating_count: 0,
+    comment_count: 0,
+    popularity_score: tool.popularity_score,
+    last_update_date: tool.last_update_date ?? `2025-${String((index % 9) + 1).padStart(2, "0")}-${String((index % 24) + 1).padStart(2, "0")}`,
+    created_at: `2025-${String((index % 8) + 1).padStart(2, "0")}-${String((index % 20) + 1).padStart(2, "0")}`,
+    is_featured: tool.is_featured ?? false,
+    strengths: tool.strengths ?? tool.pros ?? base.pros,
+    cautions: tool.cautions ?? tool.cons ?? base.cons,
+    youtube_url: tool.youtube_url ?? "",
+  };
+});
 
 const id = (slug: string) => seedTools.find((tool) => tool.slug === slug)?.tool_id ?? slug;
 

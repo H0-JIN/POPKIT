@@ -21,7 +21,7 @@ export function ToolExplorer({ tools, title, description, category, subCategory 
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 sm:p-8">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-            <div><p className="text-sm font-semibold text-cyan-200">Curated AI tools for planners, designers, developers</p><h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">{title}</h1><p className="mt-3 max-w-2xl text-zinc-400">{description}</p></div>
+            <div><p className="text-sm font-semibold text-cyan-200">Curated AI tools for planners, designers, developers</p><h1 className="mt-3 max-w-3xl whitespace-pre-line text-balance text-3xl font-black tracking-tight sm:text-5xl sm:leading-tight">{title}</h1><p className="mt-3 max-w-2xl text-zinc-400">{description}</p></div>
             <div className="grid gap-3 sm:min-w-[560px]"><div className="flex flex-col gap-3 sm:flex-row"><SearchBar value={query} onChange={setQuery} /><SortDropdown value={sort} onChange={setSort} /></div><FilterChips selected={filters} onToggle={toggle} /></div>
           </div>
         </div>

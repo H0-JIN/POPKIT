@@ -8,6 +8,7 @@ export type Tool = {
   sub_category: string;
   category_paths: string[];
   tags: string[];
+  use_tags: string[];
   short_description: string;
   editor_quote?: string;
   full_description: string;
@@ -21,6 +22,7 @@ export type Tool = {
   image_url?: string;
   youtube_url?: string;
   youtube_summary: string[];
+  usage_steps: string[];
   rating_average: number;
   rating_count: number;
   comment_count: number;
@@ -31,6 +33,8 @@ export type Tool = {
   main_features: string[];
   pros: string[];
   cons: string[];
+  strengths: string[];
+  cautions: string[];
   alternatives: string[];
 };
 

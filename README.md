@@ -46,7 +46,7 @@ npm run build
 `.env.local` 예시:
 
 ```bash
-GOOGLE_SHEETS_ID=1_57qPpmnL66YndA1qJZRlnWzBjmNypxK_FsgyzNZPnc
+GOOGLE_SHEETS_ID=10xqsKKL21u0WkFRqjUBjW2Gw_Tk24owzNTEZsFQnJTI
 GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 ```
 
@@ -58,34 +58,39 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 
 ### Sheet 1: `Tools`
 
-| 필드 | 설명 |
-| --- | --- |
-| `tool_id` | 고유 ID |
-| `slug` | URL 공유용 slug |
-| `tool_name` | AI 이름 |
-| `category` | 기획 / 디자인 / 개발 / 기타 |
-| `sub_category` | 리서치, 이미지, 코드 작성 등 |
-| `tags` | 쉼표 또는 파이프 구분 태그 |
-| `short_description` | 카드용 기능 설명 |
-| `editor_quote` 또는 `one_liner` | 카드와 상세 개요에 표시되는 에디터 한줄평 |
-| `full_description` | 상세 페이지 개요 설명 |
-| `recommended_use_cases` | 추천 업무 목록 |
-| `recommended_users` | 추천 사용자 목록 |
-| `pricing` | 무료 / 부분 유료 / 유료 |
-| `difficulty` | 쉬움 / 중급 / 초보자 추천 등 |
-| `korean_support` | true/false 또는 지원/미지원 |
-| `official_url` | 공식 사이트 URL |
-| `logo_url` | 로고 URL |
-| `image_url` | 카드 이미지 URL |
-| `youtube_url` | 사용법 영상 URL |
-| `youtube_summary` | 사용법 핵심 요약 |
-| `rating_average` | 평균 평점 |
-| `rating_count` | 평가 수 |
-| `comment_count` | 댓글 수 |
-| `popularity_score` | 인기순 정렬 우선 점수 |
-| `last_update_date` | 최신 업데이트 날짜 |
-| `created_at` | 등록일 |
-| `is_featured` | 추천 노출 여부 |
+| 필드 | 입력 형식 / 예시 | 설명 |
+| --- | --- | --- |
+| `tool_id` | `tool_chatgpt` | 고유 ID |
+| `slug` | `chatgpt` | URL 공유용 slug |
+| `tool_name` | `ChatGPT` | AI 이름 |
+| `category` | `기획` / `디자인` / `개발` / `기타` | 1차 카테고리 |
+| `sub_category` | `리서치`, `이미지`, `코드 작성` | 대표 세부 카테고리 |
+| `category_paths` | `기획/리서치, 개발/코드 작성` | 여러 카테고리에 노출할 때 사용 |
+| `tags` | `리서치, 문서 작성` | 기존 태그 입력값. 카드에는 `use_tags`가 우선 표시됩니다. |
+| `use_tags` | `리서치, 문서 작성, PPT` | 카드/검색용 활용 태그. 비어 있으면 `tags`와 기존 `활용` 값을 정규화합니다. |
+| `short_description` | 한 문장 | 카드용 기능 설명. Sheet 값이 최우선입니다. |
+| `editor_quote` 또는 `one_liner` | 짧은 한줄평 | 카드와 상세 개요의 에디터 한줄평. 실제 운영 문구가 있을 때만 입력합니다. |
+| `full_description` | 2~3문장 | 상세 페이지 개요 설명. Sheet 값이 최우선입니다. |
+| `usage_steps` | `단계1 | 단계2 | 단계3` | 사용법 탭의 기본 사용 흐름. Sheet 값이 있으면 영상 유무와 관계없이 최우선 표시됩니다. |
+| `recommended_use_cases` | `자료 조사, 문서 초안, 발표자료 구조화` | 추천 사용 업무 목록 |
+| `recommended_users` | `기획자, 마케터, 팀 리드` | 추천 사용자 목록 |
+| `strengths` | `출처 기반 검색, 최신 정보 파악` | 상세 페이지 장점 목록. 기존 `pros`도 호환됩니다. |
+| `cautions` | `답변 검증 필요, 일부 출처 품질 확인 필요` | 상세 페이지 주의할 점 목록. 기존 `cons`도 호환됩니다. |
+| `pricing` | `무료` / `부분 유료` / `유료` | 가격 정보 |
+| `difficulty` | `쉬움`, `중급`, `초보자 추천` | 사용 난이도 |
+| `korean_support` | `true`, `false`, `지원`, `예` | 한국어 지원 여부 |
+| `official_url` | `https://...` | 공식 사이트 URL |
+| `logo_url` | `https://...` | 로고 URL |
+| `image_url` | `https://...` | 카드 이미지 URL |
+| `youtube_url` | `https://youtu.be/...` | 사용법 영상 URL. 없으면 `usage_steps`만 표시합니다. |
+| `youtube_summary` | `핵심1 | 핵심2 | 핵심3` | 영상 또는 사용법 핵심 요약 |
+| `rating_average` | 실제 평균 평점 숫자 | 실제 사용자 평가가 있을 때만 입력합니다. 없으면 비워둡니다. |
+| `rating_count` | 실제 평가 수 숫자 | 실제 사용자 평가가 있을 때만 입력합니다. 없으면 비워두며 UI는 “평가 전”으로 표시됩니다. |
+| `comment_count` | 실제 댓글 수 숫자 | 실제 댓글 수가 있을 때만 입력합니다. 없으면 0으로 처리됩니다. |
+| `popularity_score` | 운영자가 정한 수동 추천 점수 | 실제 사용량 데이터가 아닌 수동 추천 보정값입니다. |
+| `last_update_date` | `2026-05-13` | 최신 업데이트 날짜 |
+| `created_at` | `2026-05-13` | 등록일 |
+| `is_featured` | `true` / `false` | 추천 노출 여부 |
 
 ### Sheet 2: `Updates`
 
@@ -102,14 +107,16 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 ## 데이터 추가 방법
 
 1. Google Sheet에 위 컬럼명으로 시트를 추가하거나 기존 컬럼을 유지합니다.
-2. `lib/data/tools.ts`의 adapter가 `name`, `description`, `카테고리`, `editor_quote`, `one_liner` 같은 일부 기존 컬럼명도 자동 매핑합니다.
-3. 새 툴은 `slug`와 `tool_id`를 명시하는 것을 권장합니다.
-4. 업데이트 히스토리는 반드시 공식 출처 URL(`source_url`)을 함께 입력합니다.
+2. 여러 값을 입력하는 컬럼은 쉼표(`,`), 파이프(`|`), 세미콜론(`;`), 줄바꿈으로 구분할 수 있습니다.
+3. `lib/data/tools.ts`의 adapter가 `name`, `description`, `카테고리`, `editor_quote`, `one_liner` 같은 일부 기존 컬럼명도 자동 매핑합니다.
+4. 새 툴은 `slug`와 `tool_id`를 명시하는 것을 권장합니다.
+5. `rating_average`, `rating_count`, `comment_count`는 실제 사용자 평가/리뷰 데이터가 있을 때만 입력합니다. 비워두면 임의 평점 없이 “평가 전” 상태로 노출됩니다.
+6. 업데이트 히스토리는 반드시 공식 출처 URL(`source_url`)을 함께 입력합니다.
 
 ## 정렬 정책
 
-- 인기순: `popularity_score`가 있으면 우선 사용합니다.
-- `popularity_score`가 없으면 `rating_count * 0.25 + comment_count * 0.25 + rating_average * 20 + recent_update_bonus`로 계산합니다.
+- 추천순: `rating_count`, `comment_count`, `rating_average`, `recent_update_bonus`, 수동 `popularity_score`를 함께 반영합니다.
+- 실제 평가/댓글 데이터가 없으면 평점 관련 값은 0으로 유지하고, 수동 `popularity_score`와 업데이트 보너스만 추천 정렬에 반영됩니다.
 - 최신 업데이트순: `last_update_date` 내림차순
 - 평점순: `rating_average`에 `rating_count` 가중치를 반영해 표본이 너무 적은 툴의 우선순위를 낮춥니다.
 - 댓글 많은 순: `comment_count` 내림차순
@@ -133,7 +140,7 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 Google Sheets를 연결하지 않아도 배포는 가능합니다. 연결하려면 Vercel Project Settings → Environment Variables에 아래 값을 추가하세요.
 
 ```bash
-GOOGLE_SHEETS_ID=1_57qPpmnL66YndA1qJZRlnWzBjmNypxK_FsgyzNZPnc
+GOOGLE_SHEETS_ID=10xqsKKL21u0WkFRqjUBjW2Gw_Tk24owzNTEZsFQnJTI
 GOOGLE_SHEETS_API_KEY=선택_값
 ```
 
