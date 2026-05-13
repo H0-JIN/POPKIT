@@ -131,7 +131,6 @@ function fallbackYoutubeSummary(name: string, usageSteps: string[]) {
   return usageSteps.length ? usageSteps : [`${name}에 넣을 자료와 목표를 먼저 준비합니다.`, "원하는 결과 형식을 구체적으로 요청합니다.", "결과를 검토하고 필요한 부분을 다시 요청합니다."];
 }
 
-
 function value(row: SheetRow, key: string) {
   return aliases[key].map((name) => row[name]).find(Boolean)?.trim() ?? "";
 }
