@@ -1,6 +1,6 @@
 export type SheetRow = Record<string, string>;
 
-const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID ?? "1_57qPpmnL66YndA1qJZRlnWzBjmNypxK_FsgyzNZPnc";
+const GOOGLE_SHEETS_ID = process.env.GOOGLE_SHEETS_ID ?? "10xqsKKL21u0WkFRqjUBjW2Gw_Tk24owzNTEZsFQnJTI";
 const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 
 function parseCsv(text: string): SheetRow[] {
