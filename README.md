@@ -92,6 +92,34 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 | `created_at` | `2026-05-13` | 등록일 |
 | `is_featured` | `true` / `false` | 추천 노출 여부 |
 
+
+### Sheet: `Core30_Content`
+
+핵심 AI 30개의 카드/상세 콘텐츠는 `Core30_Content` 탭에서 보강할 수 있습니다. 메인 목록의 노출 수와 순서는 기존 `Tools` 탭을 기준으로 유지하고, `tool_name`이 일치하는 행이 있으면 아래 컬럼은 `Core30_Content` 값을 우선 사용합니다. `tool_name` 매칭은 공백과 대소문자 차이를 보정합니다.
+
+| 필드 | 입력 형식 / 예시 | 우선 적용 대상 |
+| --- | --- | --- |
+| `tool_name` | `ChatGPT` | 기존 `Tools` 행과 병합할 기준 이름 |
+| `official_url` | `https://...` | `Tools`의 URL이 비어 있을 때만 보조값으로 사용 |
+| `category_paths` | `기획/리서치, 개발/코드 작성` | 카드/상세 카테고리 경로 |
+| `use_tags` | `리서치, 문서 작성, PPT` | 카드 활용 태그와 검색 |
+| `editor_quote` | 짧은 한줄평 | 카드/상세 한줄평 |
+| `short_description` | 한 문장 | 카드 설명 |
+| `full_description` | 2~3문장 | 상세 개요 |
+| `recommended_use_cases` | `자료 조사, 문서 초안, 발표자료 구조화` | 추천 업무 |
+| `recommended_users` | `기획자, 마케터, 팀 리드` | 추천 사용자 |
+| `strengths` | `출처 기반 검색, 최신 정보 파악` | 상세 장점 |
+| `cautions` | `답변 검증 필요, 일부 출처 품질 확인 필요` | 상세 주의할 점 |
+| `usage_steps` | `단계1 | 단계2 | 단계3` | 사용법 탭 기본 흐름 |
+| `youtube_url` | `https://youtu.be/...` | 사용법 영상 |
+| `youtube_summary` | `핵심1 | 핵심2 | 핵심3` | 영상/사용법 요약 |
+| `rating_average` | `0` 또는 실제 평균 평점 | 실제 평가가 없으면 `0` 유지 |
+| `rating_count` | `0` 또는 실제 평가 수 | 실제 평가가 없으면 `0` 유지 |
+| `comment_count` | `0` 또는 실제 댓글 수 | 실제 댓글이 없으면 `0` 유지 |
+| `source_url` | `https://...` | 콘텐츠 출처 기록용. 현재 UI에는 표시하지 않습니다. |
+
+병합 우선순위는 `Core30_Content` 값 → 기존 `Tools` 값 → seed/fallback 값입니다. 단, `Core30_Content`에 없는 AI를 새로 목록에 추가하지는 않습니다.
+
 ### Sheet 2: `Updates`
 
 `update_id`, `tool_id`, `update_date`, `update_title`, `update_summary`, `work_impact`, `recommended_users`, `source_url`, `created_at`

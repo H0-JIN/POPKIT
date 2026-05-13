@@ -142,6 +142,48 @@ function value(row: SheetRow, key: string) {
   return aliases[key].map((name) => row[name]).find(Boolean)?.trim() ?? "";
 }
 
+const coreContentFields = [
+  "category_paths",
+  "use_tags",
+  "editor_quote",
+  "short_description",
+  "full_description",
+  "recommended_use_cases",
+  "recommended_users",
+  "strengths",
+  "cautions",
+  "usage_steps",
+  "youtube_url",
+  "youtube_summary",
+  "rating_average",
+  "rating_count",
+  "comment_count"
+] as const;
+
+function toolNameKey(name: string) {
+  return name.replace(/\s+/g, "").trim().toLowerCase();
+}
+
+function coreContentByName(rows: SheetRow[]) {
+  const byName = new Map<string, SheetRow>();
+  rows.forEach((row) => {
+    const key = toolNameKey(value(row, "tool_name"));
+    if (key) byName.set(key, row);
+  });
+  return byName;
+}
+
+function mergeCoreContent(row: SheetRow, core?: SheetRow) {
+  if (!core) return row;
+  const merged = { ...row };
+  coreContentFields.forEach((field) => {
+    const coreValue = value(core, field);
+    if (coreValue) merged[aliases[field][0]] = coreValue;
+  });
+  if (!value(merged, "official_url") && value(core, "official_url")) merged.official_url = value(core, "official_url");
+  return merged;
+}
+
 function list(text: string) {
   return text.split(/[,|;\n]/).map((item) => item.trim()).filter(Boolean);
 }
@@ -371,7 +413,9 @@ function adapt(row: SheetRow, index: number): Tool | null {
 }
 
 export async function getTools(sort: SortKey = "popular") {
-  const rows = fillDownRows(await fetchSheetRows("Tools"));
+  const [toolRows, coreRows] = await Promise.all([fetchSheetRows("Tools"), fetchSheetRows("Core30_Content")]);
+  const coreRowsByName = coreContentByName(coreRows);
+  const rows = fillDownRows(toolRows).map((row) => mergeCoreContent(row, coreRowsByName.get(toolNameKey(value(row, "tool_name")))));
   const sheetTools = rows.map(adapt).filter((tool): tool is Tool => Boolean(tool));
   const bySlug = new Map<string, Tool>();
   [...sheetTools, ...seedTools].forEach((tool) => {
