@@ -5,6 +5,7 @@ const base = {
   image_url: "",
   youtube_url: "",
   youtube_summary: ["입력 자료와 목표를 먼저 정리합니다.", "초안 생성 후 사실 확인과 톤 조정을 진행합니다.", "반복 프롬프트로 실무 산출물 품질을 높입니다."],
+  usage_steps: ["작업 목적과 필요한 입력 자료를 먼저 정리합니다.", "원하는 결과 형식과 톤, 분량을 구체적으로 요청합니다.", "생성 결과를 검토하고 사실 확인이나 후속 수정을 진행합니다."],
   is_featured: false,
   main_features: ["초안 생성", "자료 요약", "워크플로우 자동화"],
   pros: ["진입 장벽이 낮습니다.", "반복 업무 시간을 줄일 수 있습니다.", "다양한 직무에 적용하기 쉽습니다."],
@@ -121,6 +122,11 @@ function normalizeSeedUseTags(tags: string[]) {
   return Array.from(new Set(tags.map(normalizeSeedUseTag).filter(Boolean))).slice(0, 3);
 }
 
+function seedFullDescription(tool: Pick<Tool, "tool_name" | "short_description" | "category" | "sub_category">) {
+  const workflow = tool.category === "개발" ? "개발과 검토 흐름" : tool.category === "디자인" ? "시각 제작 흐름" : tool.category === "기획" ? "기획과 문서화 흐름" : "업무 생산성 흐름";
+  return `${tool.tool_name}는 ${tool.short_description}입니다. ${workflow}에서 초안 작성, 정리, 반복 수정처럼 시간이 오래 걸리는 단계를 줄이는 데 유용합니다. 최종 산출물은 목적과 맥락에 맞게 검토한 뒤 활용하는 것이 좋습니다.`;
+}
+
 const categoryPathsBySlug: Record<string, string[]> = {
   chatgpt: ["기획/리서치", "기획/문서 작성", "기획/콘텐츠", "개발/코드 작성"],
   claude: ["기획/리서치", "기획/문서 작성", "개발/코드 작성"],
@@ -177,20 +183,22 @@ export const seedTools: Tool[] = rows.map((tool, index) => ({
   use_tags: normalizeSeedUseTags(tool.use_tags ?? tool.tags ?? [tool.sub_category, "AI"]),
   short_description: tool.short_description,
   editor_quote: tool.editor_quote ?? editorQuotes[tool.slug] ?? "",
-  full_description: `${tool.tool_name}는 ${tool.short_description}입니다. 실무자는 기획, 제작, 검토 흐름에 맞춰 결과를 반복 개선할 수 있습니다.`,
-  recommended_use_cases: tool.tags?.slice(0, 3) ?? [tool.sub_category, "생산성"],
+  full_description: tool.full_description ?? seedFullDescription(tool),
+  recommended_use_cases: tool.recommended_use_cases ?? tool.tags?.slice(0, 3) ?? [tool.sub_category, "생산성"],
   recommended_users: [tool.category === "개발" ? "개발자" : tool.category === "디자인" ? "디자이너" : "기획자", "초보자", "팀 리드"],
   pricing: index % 5 === 0 ? "무료" : index % 3 === 0 ? "유료" : "부분 유료",
   difficulty: index % 4 === 0 ? "초보자 추천" : index % 4 === 1 ? "중급" : "쉬움",
   korean_support: index % 3 !== 1,
   official_url: tool.official_url,
-  rating_average: tool.rating_average ?? Number((4.1 + (index % 7) * 0.1).toFixed(1)),
-  rating_count: tool.rating_count ?? 620 + index * 173,
-  comment_count: tool.comment_count ?? 24 + index * 11,
+  rating_average: tool.rating_average ?? 0,
+  rating_count: tool.rating_count ?? 0,
+  comment_count: tool.comment_count ?? 0,
   popularity_score: tool.popularity_score,
   last_update_date: tool.last_update_date ?? `2025-${String((index % 9) + 1).padStart(2, "0")}-${String((index % 24) + 1).padStart(2, "0")}`,
   created_at: `2025-${String((index % 8) + 1).padStart(2, "0")}-${String((index % 20) + 1).padStart(2, "0")}`,
   is_featured: tool.is_featured ?? false,
+  strengths: tool.strengths ?? tool.pros ?? base.pros,
+  cautions: tool.cautions ?? tool.cons ?? base.cons,
   youtube_url: tool.youtube_url ?? "",
 }));
 

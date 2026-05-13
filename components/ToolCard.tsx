@@ -19,7 +19,7 @@ export function ToolCard({ tool }: { tool: Tool }) {
           {tool.editor_quote ? <p className="mt-2 line-clamp-2 text-[15px] font-semibold leading-6 text-cyan-100/90">“{tool.editor_quote}”</p> : null}
           <p className="mt-2 line-clamp-2 min-h-12 text-sm leading-6 text-zinc-400">{tool.short_description}</p>
         </div>
-        <div className="flex flex-wrap gap-2">{tool.use_tags.slice(0, 3).map((tag) => <span key={tag} className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-zinc-300">{tag}</span>)}</div>
+        <div className="flex flex-wrap gap-2">{(tool.use_tags.length ? tool.use_tags : tool.tags).slice(0, 3).map((tag) => <span key={tag} className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-zinc-300">{tag}</span>)}</div>
         <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400"><RatingBadge rating={tool.rating_average} count={tool.rating_count} /><span>댓글 {tool.comment_count}</span><UpdateBadge date={tool.last_update_date} /></div>
         <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4 text-sm"><span className="text-zinc-500">{getDomain(tool.official_url)}</span><span className="font-semibold text-cyan-200">자세히 보기 →</span></div>
       </div>

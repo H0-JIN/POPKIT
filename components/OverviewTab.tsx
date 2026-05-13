@@ -25,6 +25,7 @@ function MetricItem({ label, value, helper }: { label: string; value: ReactNode;
 
 export function OverviewTab({ tool, updates }: { tool: Tool; updates: ToolUpdate[] }) {
   const latestUpdate = updates[0]?.update_date || tool.last_update_date;
+  const hasRating = tool.rating_count > 0;
 
   return (
     <div className="space-y-6">
@@ -37,7 +38,7 @@ export function OverviewTab({ tool, updates }: { tool: Tool; updates: ToolUpdate
         <aside className="rounded-[2rem] border border-white/10 bg-zinc-950/35 p-5">
           <p className="text-sm font-bold text-white">핵심 지표</p>
           <div className="mt-4 grid gap-3">
-            <MetricItem label="평점 / 평가 수" value={<RatingBadge rating={tool.rating_average} count={tool.rating_count} />} />
+            <MetricItem label="평점 / 평가 수" value={hasRating ? <RatingBadge rating={tool.rating_average} count={tool.rating_count} /> : "아직 사용자 평가가 없습니다."} helper={hasRating ? undefined : "첫 리뷰를 남겨보세요."} />
             <MetricItem label="댓글 수" value={`${formatNumber(tool.comment_count)}개`} />
             <MetricItem label="업데이트 히스토리" value={`${formatNumber(updates.length)}개`} helper="공식 출처 기반 기록" />
             <MetricItem label="최근 업데이트 시점" value={<UpdateBadge date={latestUpdate} />} helper={latestUpdate} />
@@ -48,8 +49,8 @@ export function OverviewTab({ tool, updates }: { tool: Tool; updates: ToolUpdate
         <FeatureBlock title="주요 기능" items={tool.main_features} />
         <FeatureBlock title="추천 사용 업무" items={tool.recommended_use_cases} />
         <FeatureBlock title="추천 사용자" items={tool.recommended_users} />
-        <FeatureBlock title="장점" items={tool.pros} />
-        <FeatureBlock title="주의할 점" items={tool.cons} />
+        <FeatureBlock title="장점" items={tool.strengths.length ? tool.strengths : tool.pros} />
+        <FeatureBlock title="주의할 점" items={tool.cautions.length ? tool.cautions : tool.cons} />
         <FeatureBlock title="유사 AI / 대체 AI" items={tool.alternatives} />
       </section>
     </div>
