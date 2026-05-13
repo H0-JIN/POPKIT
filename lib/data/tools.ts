@@ -16,7 +16,20 @@ const aliases: Record<string, string[]> = {
   use_tags: ["use_tags", "활용 태그", "사용 태그", "업무 태그", "usage_tags", "활용"],
   category_paths: ["category_paths", "categories", "분류", "복수 분류", "카테고리 경로"],
   editor_quote: ["editor_quote", "one_liner", "editor_one_liner", "에디터 한줄평", "한줄평"],
-  short_description: ["short_description", "description", "설명", "한 줄 설명"],
+  short_description: [
+    "short_description",
+    "description",
+    "tool_description",
+    "card_description",
+    "summary",
+    "intro",
+    "설명",
+    "설명_요약",
+    "요약",
+    "소개",
+    "간단 설명",
+    "한 줄 설명"
+  ],
   full_description: ["full_description", "상세 설명"],
   recommended_use_cases: ["recommended_use_cases", "use_cases", "추천 업무"],
   recommended_users: ["recommended_users", "추천 사용자"],
@@ -43,6 +56,64 @@ const aliases: Record<string, string[]> = {
   cautions: ["cautions", "주의사항", "주의할 점"],
   alternatives: ["alternatives", "유사 AI"]
 };
+
+const contentOverlaySheetNames = ["Core30_Content"] as const;
+
+const contentOverlayFields = [
+  "official_url",
+  "category_paths",
+  "use_tags",
+  "editor_quote",
+  "short_description",
+  "full_description",
+  "recommended_use_cases",
+  "recommended_users",
+  "strengths",
+  "cautions",
+  "usage_steps",
+  "youtube_url",
+  "youtube_summary",
+  "rating_average",
+  "rating_count",
+  "comment_count"
+] as const;
+
+const toolNameAliases: Record<string, string> = {
+  googlegemini: "gemini",
+  notebooklm: "notebooklm",
+  skywork: "skywork",
+  스카이워크: "skywork",
+  tomeai: "tome",
+  perplexity: "perplexity",
+  claude: "claude",
+  chatgpt: "chatgpt",
+  napkin: "napkin-ai",
+  napkinai: "napkin-ai",
+  kling: "kling-ai",
+  klingai: "kling-ai",
+  lavable: "lovable",
+  lovable: "lovable"
+};
+
+const canonicalToolNames: Record<string, string> = {
+  "napkin-ai": "Napkin AI",
+  "kling-ai": "Kling AI",
+  lovable: "Lovable"
+};
+
+const canonicalToolSlugs: Record<string, string> = {
+  "napkin-ai": "napkin-ai",
+  "kling-ai": "kling-ai",
+  lovable: "lovable"
+};
+
+const zeroRatingState = {
+  rating_average: 0,
+  rating_count: 0,
+  comment_count: 0
+} as const;
+
+const placeholderDescriptionPattern = /AI\s*툴\s*설명을?\s*준비\s*중입니다\.?/i;
 
 const topCategories = ["기획", "디자인", "개발", "기타"];
 const subCategoriesByTop: Record<string, string[]> = {
@@ -145,6 +216,133 @@ function normalizeCategoryPath(path: string) {
 
 function unique(items: string[]) {
   return Array.from(new Set(items.filter(Boolean)));
+}
+
+function normalizeToolNameForMatch(name: string) {
+  const normalized = name
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9가-힣]/g, "");
+  return toolNameAliases[normalized] ?? normalized;
+}
+
+function isPlaceholderDescription(text: string) {
+  return placeholderDescriptionPattern.test(text.trim());
+}
+
+function descriptionValue(row: SheetRow) {
+  const candidates = aliases.short_description
+    .map((name) => row[name]?.trim())
+    .filter((candidate): candidate is string => Boolean(candidate));
+  return candidates.find((candidate) => !isPlaceholderDescription(candidate)) ?? candidates[0] ?? "";
+}
+
+function buildContentOverlayMap(rows: SheetRow[]) {
+  const overlays = new Map<string, SheetRow>();
+
+  rows.forEach((row) => {
+    const name = value(row, "tool_name");
+    const matchKey = normalizeToolNameForMatch(name);
+    if (!matchKey) return;
+
+    const overlay: SheetRow = {};
+    contentOverlayFields.forEach((field) => {
+      const fieldValue = value(row, field);
+      if (fieldValue) overlay[field] = fieldValue;
+    });
+
+    if (Object.keys(overlay).length) overlays.set(matchKey, overlay);
+  });
+
+  return overlays;
+}
+
+function mergeContentOverlay(row: SheetRow, overlays: Map<string, SheetRow>) {
+  const matchKey = normalizeToolNameForMatch(value(row, "tool_name"));
+  const overlay = matchKey ? overlays.get(matchKey) : undefined;
+  return overlay ? { ...row, ...overlay } : row;
+}
+
+async function fetchContentOverlayRows(sheetNames: readonly string[]) {
+  const rowGroups = await Promise.all(sheetNames.map((sheetName) => fetchSheetRows(sheetName)));
+  return rowGroups.flat();
+}
+
+function hasOfficialUrl(tool: Tool) {
+  return Boolean(tool.official_url && tool.official_url !== "#");
+}
+
+function completionScore(tool: Tool) {
+  return [
+    tool.editor_quote,
+    tool.short_description && !isPlaceholderDescription(tool.short_description) ? tool.short_description : "",
+    tool.full_description,
+    hasOfficialUrl(tool) ? tool.official_url : "",
+    ...tool.recommended_use_cases,
+    ...tool.recommended_users,
+    ...tool.strengths,
+    ...tool.cautions,
+    ...tool.usage_steps
+  ].filter(Boolean).length;
+}
+
+function recordPriority(tool: Tool) {
+  return completionScore(tool) + (hasOfficialUrl(tool) ? 100 : 0);
+}
+
+function canonicalToolSlug(matchKey: string) {
+  return canonicalToolSlugs[matchKey] ?? matchKey.replace(/[^a-z0-9가-힣]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function applyCanonicalToolIdentity(tool: Tool, matchKey: string): Tool {
+  const canonicalName = canonicalToolNames[matchKey];
+  if (!canonicalName) return tool;
+
+  return {
+    ...tool,
+    tool_name: canonicalName,
+    slug: canonicalToolSlug(matchKey)
+  };
+}
+
+function mergeToolRecords(primary: Tool, secondary: Tool): Tool {
+  const base = recordPriority(secondary) > recordPriority(primary) ? secondary : primary;
+  const fallback = base === primary ? secondary : primary;
+  const shortDescription = !isPlaceholderDescription(base.short_description) ? base.short_description : fallback.short_description;
+
+  return {
+    ...base,
+    short_description: shortDescription,
+    editor_quote: base.editor_quote || fallback.editor_quote,
+    full_description: base.full_description || fallback.full_description,
+    recommended_use_cases: base.recommended_use_cases.length ? base.recommended_use_cases : fallback.recommended_use_cases,
+    recommended_users: base.recommended_users.length ? base.recommended_users : fallback.recommended_users,
+    strengths: base.strengths.length ? base.strengths : fallback.strengths,
+    cautions: base.cautions.length ? base.cautions : fallback.cautions,
+    pros: base.pros.length ? base.pros : fallback.pros,
+    cons: base.cons.length ? base.cons : fallback.cons,
+    usage_steps: base.usage_steps.length ? base.usage_steps : fallback.usage_steps,
+    youtube_summary: base.youtube_summary.length ? base.youtube_summary : fallback.youtube_summary,
+    category_paths: base.category_paths.length ? base.category_paths : fallback.category_paths,
+    tags: base.tags.length ? base.tags : fallback.tags,
+    use_tags: base.use_tags.length ? base.use_tags : fallback.use_tags,
+    official_url: hasOfficialUrl(base) ? base.official_url : fallback.official_url,
+    ...zeroRatingState
+  };
+}
+
+function dedupeToolsByName(tools: Tool[]) {
+  const byName = new Map<string, Tool>();
+
+  tools.forEach((tool) => {
+    const matchKey = normalizeToolNameForMatch(tool.tool_name);
+    const current = byName.get(matchKey);
+    const merged = current ? mergeToolRecords(current, tool) : { ...tool, ...zeroRatingState };
+    byName.set(matchKey, applyCanonicalToolIdentity(merged, matchKey));
+  });
+
+  return Array.from(byName.values());
 }
 
 function canonicalSubCategory(text: string) {
@@ -293,7 +491,7 @@ function fillDownRows(rows: SheetRow[]) {
 function adapt(row: SheetRow, index: number): Tool | null {
   const name = value(row, "tool_name");
   if (!name) return null;
-  const seed = seedTools.find((tool) => tool.tool_name.toLowerCase() === name.toLowerCase());
+  const seed = seedTools.find((tool) => normalizeToolNameForMatch(tool.tool_name) === normalizeToolNameForMatch(name));
   const legacyGroup = value(row, "legacy_group");
   const legacyCategory = value(row, "legacy_category");
   const legacyUsageTags = value(row, "legacy_usage_tags");
@@ -314,13 +512,11 @@ function adapt(row: SheetRow, index: number): Tool | null {
   const cautions = list(value(row, "cautions"));
   const youtubeSummary = list(value(row, "youtube_summary"));
   const officialUrl = normalizeOfficialUrl(value(row, "official_url"), seed?.official_url || "#");
-  const sourceShortDescription = value(row, "short_description") || seed?.short_description || "";
+  const sourceShortDescription = descriptionValue(row) || seed?.short_description || "";
   const shortDescription = fallbackShortDescription(name, category, subCategory, sourceShortDescription);
   const normalizedUsageSteps = usageSteps.length ? usageSteps : seed?.usage_steps?.length ? seed.usage_steps : defaultUsageSteps;
   const normalizedStrengths = strengths.length ? strengths : seed?.strengths?.length ? seed.strengths : seed?.pros?.length ? seed.pros : categoryTone(category).strengths;
   const normalizedCautions = cautions.length ? cautions : seed?.cautions?.length ? seed.cautions : seed?.cons?.length ? seed.cons : defaultCautions;
-  const hasRatingAverage = Boolean(value(row, "rating_average"));
-  const hasRatingCount = Boolean(value(row, "rating_count"));
 
   return {
     ...(seed ?? seedTools[index % seedTools.length]),
@@ -346,9 +542,7 @@ function adapt(row: SheetRow, index: number): Tool | null {
     youtube_url: value(row, "youtube_url") || seed?.youtube_url,
     youtube_summary: youtubeSummary.length ? youtubeSummary : seed?.youtube_summary?.length ? seed.youtube_summary : fallbackYoutubeSummary(name, normalizedUsageSteps),
     usage_steps: normalizedUsageSteps,
-    rating_average: hasRatingAverage ? num(value(row, "rating_average"), 0) : 0,
-    rating_count: hasRatingCount ? num(value(row, "rating_count"), 0) : 0,
-    comment_count: num(value(row, "comment_count"), seed?.comment_count ?? 0),
+    ...zeroRatingState,
     popularity_score: value(row, "popularity_score") ? num(value(row, "popularity_score"), 0) : seed?.popularity_score,
     last_update_date: value(row, "last_update_date") || seed?.last_update_date || new Date().toISOString().slice(0, 10),
     created_at: value(row, "created_at") || seed?.created_at || new Date().toISOString().slice(0, 10),
@@ -363,13 +557,14 @@ function adapt(row: SheetRow, index: number): Tool | null {
 }
 
 export async function getTools(sort: SortKey = "popular") {
-  const rows = fillDownRows(await fetchSheetRows("Tools"));
+  const [mainRows, contentRows] = await Promise.all([
+    fetchSheetRows("Tools"),
+    fetchContentOverlayRows(contentOverlaySheetNames)
+  ]);
+  const contentOverlays = buildContentOverlayMap(contentRows);
+  const rows = fillDownRows(mainRows).map((row) => mergeContentOverlay(row, contentOverlays));
   const sheetTools = rows.map(adapt).filter((tool): tool is Tool => Boolean(tool));
-  const bySlug = new Map<string, Tool>();
-  [...sheetTools, ...seedTools].forEach((tool) => {
-    if (!bySlug.has(tool.slug)) bySlug.set(tool.slug, tool);
-  });
-  return sortTools(Array.from(bySlug.values()), sort);
+  return sortTools(dedupeToolsByName([...sheetTools, ...seedTools]), sort);
 }
 
 export async function getToolBySlug(slug: string) {
