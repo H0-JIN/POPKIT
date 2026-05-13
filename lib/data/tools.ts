@@ -44,6 +44,27 @@ const aliases: Record<string, string[]> = {
   alternatives: ["alternatives", "유사 AI"]
 };
 
+const contentOverlaySheetNames = ["Core30_Content"] as const;
+
+const contentOverlayFields = [
+  "official_url",
+  "category_paths",
+  "use_tags",
+  "editor_quote",
+  "short_description",
+  "full_description",
+  "recommended_use_cases",
+  "recommended_users",
+  "strengths",
+  "cautions",
+  "usage_steps",
+  "youtube_url",
+  "youtube_summary",
+  "rating_average",
+  "rating_count",
+  "comment_count"
+] as const;
+
 const topCategories = ["기획", "디자인", "개발", "기타"];
 const subCategoriesByTop: Record<string, string[]> = {
   기획: ["리서치", "문서 작성", "PPT/제안서", "콘텐츠"],
@@ -145,6 +166,45 @@ function normalizeCategoryPath(path: string) {
 
 function unique(items: string[]) {
   return Array.from(new Set(items.filter(Boolean)));
+}
+
+function normalizeToolNameForMatch(name: string) {
+  return name
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9가-힣]/g, "");
+}
+
+function buildContentOverlayMap(rows: SheetRow[]) {
+  const overlays = new Map<string, SheetRow>();
+
+  rows.forEach((row) => {
+    const name = value(row, "tool_name");
+    const matchKey = normalizeToolNameForMatch(name);
+    if (!matchKey) return;
+
+    const overlay: SheetRow = {};
+    contentOverlayFields.forEach((field) => {
+      const fieldValue = value(row, field);
+      if (fieldValue) overlay[field] = fieldValue;
+    });
+
+    if (Object.keys(overlay).length) overlays.set(matchKey, overlay);
+  });
+
+  return overlays;
+}
+
+function mergeContentOverlay(row: SheetRow, overlays: Map<string, SheetRow>) {
+  const matchKey = normalizeToolNameForMatch(value(row, "tool_name"));
+  const overlay = matchKey ? overlays.get(matchKey) : undefined;
+  return overlay ? { ...row, ...overlay } : row;
+}
+
+async function fetchContentOverlayRows(sheetNames: readonly string[]) {
+  const rowGroups = await Promise.all(sheetNames.map((sheetName) => fetchSheetRows(sheetName)));
+  return rowGroups.flat();
 }
 
 function canonicalSubCategory(text: string) {
@@ -363,7 +423,12 @@ function adapt(row: SheetRow, index: number): Tool | null {
 }
 
 export async function getTools(sort: SortKey = "popular") {
-  const rows = fillDownRows(await fetchSheetRows("Tools"));
+  const [mainRows, contentRows] = await Promise.all([
+    fetchSheetRows("Tools"),
+    fetchContentOverlayRows(contentOverlaySheetNames)
+  ]);
+  const contentOverlays = buildContentOverlayMap(contentRows);
+  const rows = fillDownRows(mainRows).map((row) => mergeContentOverlay(row, contentOverlays));
   const sheetTools = rows.map(adapt).filter((tool): tool is Tool => Boolean(tool));
   const bySlug = new Map<string, Tool>();
   [...sheetTools, ...seedTools].forEach((tool) => {
