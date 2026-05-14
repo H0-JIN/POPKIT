@@ -274,7 +274,10 @@ function completionScore(tool: Tool) {
 function mergeToolRecords(primary: Tool, secondary: Tool): Tool {
   const base = completionScore(secondary) > completionScore(primary) ? secondary : primary;
   const fallback = base === primary ? secondary : primary;
-  const shortDescription = !isPlaceholderDescription(base.short_description) ? base.short_description : fallback.short_description;
+  const primaryShortDescription = !isPlaceholderDescription(primary.short_description) ? primary.short_description : "";
+  const fallbackShortDescription = !isPlaceholderDescription(fallback.short_description) ? fallback.short_description : "";
+  const baseShortDescription = !isPlaceholderDescription(base.short_description) ? base.short_description : "";
+  const shortDescription = primaryShortDescription || fallbackShortDescription || baseShortDescription || base.short_description;
 
   return {
     ...base,
