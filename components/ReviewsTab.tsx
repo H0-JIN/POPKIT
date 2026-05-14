@@ -60,8 +60,8 @@ function averageRating(reviews: Review[], field: RatingKey) {
   return ratedReviews.length ? ratedReviews.reduce((acc, review) => acc + (review[field] ?? 0), 0) / ratedReviews.length : 0;
 }
 
-function optionalRating(value: string) {
-  return value ? Number(value) : 0;
+function optionalRating(value: number | null) {
+  return value === null ? null : value;
 }
 export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReviews: Review[] }) {
   const [localReviews, setLocalReviews] = useState<Review[]>([]);
