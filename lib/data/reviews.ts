@@ -60,6 +60,11 @@ function clampRating(value: unknown) {
   return Math.round(rating * 10) / 10;
 }
 
+function optionalRating(value: unknown) {
+  if (value === undefined || value === null || value === "") return 0;
+  return clampRating(value);
+}
+
 export function validateReviewInput(body: unknown): { ok: true; value: ReviewInput } | { ok: false; error: string } {
   if (!body || typeof body !== "object") return { ok: false, error: "리뷰 요청 형식이 올바르지 않습니다." };
   const data = body as Record<string, unknown>;
@@ -70,16 +75,17 @@ export function validateReviewInput(body: unknown): { ok: true; value: ReviewInp
   const comment = String(data.comment ?? "").trim();
   if (!tool_id || !tool_slug || !tool_name) return { ok: false, error: "리뷰를 연결할 AI 툴 정보가 없습니다." };
   if (!user_role) return { ok: false, error: "사용자 역할을 입력해주세요." };
-  if (comment.length < 10) return { ok: false, error: "리뷰 본문은 10자 이상 입력해주세요." };
+  if (comment.trim().length === 0) return { ok: false, error: "리뷰 본문을 입력해주세요." };
 
   const rating_total = clampRating(data.rating_total);
-  const rating_work_usefulness = clampRating(data.rating_work_usefulness);
-  const rating_output_quality = clampRating(data.rating_output_quality);
-  const rating_difficulty = clampRating(data.rating_difficulty);
-  const rating_price = clampRating(data.rating_price);
-  const rating_korean_support = clampRating(data.rating_korean_support);
-  if ([rating_total, rating_work_usefulness, rating_output_quality, rating_difficulty, rating_price, rating_korean_support].some((rating) => rating === null)) {
-    return { ok: false, error: "종합 평점과 항목별 평점은 모두 1~5점으로 선택해주세요." };
+  const rating_work_usefulness = optionalRating(data.rating_work_usefulness);
+  const rating_output_quality = optionalRating(data.rating_output_quality);
+  const rating_difficulty = optionalRating(data.rating_difficulty);
+  const rating_price = optionalRating(data.rating_price);
+  const rating_korean_support = optionalRating(data.rating_korean_support);
+  if (rating_total === null) return { ok: false, error: "종합 평점을 1~5점으로 선택해주세요." };
+  if ([rating_work_usefulness, rating_output_quality, rating_difficulty, rating_price, rating_korean_support].some((rating) => rating === null)) {
+    return { ok: false, error: "항목별 평점은 선택 시 1~5점이어야 합니다." };
   }
 
   return {
@@ -124,7 +130,10 @@ export async function getReviewsByToolId(toolId: string) {
 
 export function getReviewSummary(reviews: Review[]): ReviewSummary {
   const count = reviews.length;
-  const average = (field: keyof Pick<Review, "rating_total" | "rating_work_usefulness" | "rating_output_quality" | "rating_difficulty" | "rating_price" | "rating_korean_support">) => count ? reviews.reduce((acc, review) => acc + review[field], 0) / count : 0;
+  const average = (field: keyof Pick<Review, "rating_total" | "rating_work_usefulness" | "rating_output_quality" | "rating_difficulty" | "rating_price" | "rating_korean_support">) => {
+    const ratedReviews = reviews.filter((review) => review[field] > 0);
+    return ratedReviews.length ? ratedReviews.reduce((acc, review) => acc + review[field], 0) / ratedReviews.length : 0;
+  };
   return {
     count,
     rating_total: average("rating_total"),
