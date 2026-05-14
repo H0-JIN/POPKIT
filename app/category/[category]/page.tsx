@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Sidebar } from "@/components/Sidebar";
 import { ToolExplorer } from "@/components/ToolExplorer";
 import { getTools } from "@/lib/data/tools";
+import { applyReviewSummariesToTools, getReviews } from "@/lib/data/reviews";
 import { SITE_NAME } from "@/lib/constants";
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
@@ -14,8 +15,9 @@ export default async function CategoryPage({ params, searchParams }: { params: P
   const [{ category }, query] = await Promise.all([params, searchParams]);
   const decoded = decodeURIComponent(category);
   const subCategory = query.sub ? decodeURIComponent(query.sub) : undefined;
-  const tools = await getTools();
+  const [tools, reviews] = await Promise.all([getTools(), getReviews()]);
+  const reviewAwareTools = applyReviewSummariesToTools(tools, reviews);
   const title = subCategory ? `${decoded} > ${subCategory} AI 툴` : `${decoded} AI 툴`;
   const description = subCategory ? `${decoded}/${subCategory} 업무 흐름에 맞는 AI 툴을 검색, 필터, 정렬로 비교하세요.` : `${decoded} 직무와 업무 흐름에 맞는 AI 툴을 검색, 필터, 정렬로 비교하세요.`;
-  return <main className="flex min-h-screen"><Sidebar activeCategory={decoded} activeSubCategory={subCategory} /><ToolExplorer tools={tools} category={decoded} subCategory={subCategory} title={title} description={description} /></main>;
+  return <main className="flex min-h-screen"><Sidebar activeCategory={decoded} activeSubCategory={subCategory} /><ToolExplorer tools={reviewAwareTools} category={decoded} subCategory={subCategory} title={title} description={description} /></main>;
 }

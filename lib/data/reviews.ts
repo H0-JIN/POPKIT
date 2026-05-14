@@ -161,6 +161,38 @@ export function applyReviewSummaryToTool<T extends Tool>(tool: T, reviews: Revie
   return { ...tool, rating_average: summary.rating_total, rating_count: summary.count, comment_count: summary.count };
 }
 
+function addReviewToIndex(index: Map<string, Review[]>, key: string | undefined, review: Review) {
+  if (!key) return;
+  const normalizedKey = key.trim();
+  if (!normalizedKey) return;
+  const indexedReviews = index.get(normalizedKey);
+  if (indexedReviews) {
+    indexedReviews.push(review);
+    return;
+  }
+  index.set(normalizedKey, [review]);
+}
+
+function getIndexedReviewsForTool(index: Map<string, Review[]>, tool: Pick<Tool, "tool_id" | "slug">) {
+  const reviews = new Set<Review>();
+  for (const key of [tool.tool_id, tool.slug]) {
+    const normalizedKey = key.trim();
+    if (!normalizedKey) continue;
+    index.get(normalizedKey)?.forEach((review) => reviews.add(review));
+  }
+  return Array.from(reviews);
+}
+
+export function applyReviewSummariesToTools<T extends Tool>(tools: T[], reviews: Review[]): T[] {
+  const reviewsByToolKey = new Map<string, Review[]>();
+  for (const review of reviews) {
+    addReviewToIndex(reviewsByToolKey, review.tool_id, review);
+    addReviewToIndex(reviewsByToolKey, review.tool_slug, review);
+  }
+
+  return tools.map((tool) => applyReviewSummaryToTool(tool, getIndexedReviewsForTool(reviewsByToolKey, tool)));
+}
+
 export async function createReview(input: ReviewInput): Promise<Review> {
   const review: Review = {
     review_id: `review_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
