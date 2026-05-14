@@ -60,7 +60,9 @@ function averageRating(reviews: Review[], field: RatingKey) {
   return ratedReviews.length ? ratedReviews.reduce((acc, review) => acc + (review[field] ?? 0), 0) / ratedReviews.length : 0;
 }
 
-
+function optionalRating(value: string) {
+  return value ? Number(value) : 0;
+}
 export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReviews: Review[] }) {
   const [localReviews, setLocalReviews] = useState<Review[]>([]);
   const [form, setForm] = useState<FormState>(initialForm);
@@ -100,12 +102,12 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
         tool_slug: tool.slug,
         tool_name: tool.tool_name,
         user_role: form.user_role.trim(),
-        rating_total: form.rating_total,
-        rating_work_usefulness: form.rating_work_usefulness,
-        rating_output_quality: form.rating_output_quality,
-        rating_difficulty: form.rating_difficulty,
-        rating_price: form.rating_price,
-        rating_korean_support: form.rating_korean_support,
+        rating_total: Number(form.rating_total),
+        rating_work_usefulness: optionalRating(form.rating_work_usefulness),
+        rating_output_quality: optionalRating(form.rating_output_quality),
+        rating_difficulty: optionalRating(form.rating_difficulty),
+        rating_price: optionalRating(form.rating_price),
+        rating_korean_support: optionalRating(form.rating_korean_support),
         comment: form.comment.trim()
       };
       const res = await fetch("/api/reviews", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
