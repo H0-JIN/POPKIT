@@ -84,8 +84,8 @@ const audienceCards = [
   { title: "AI SaaS 기업", description: "잠재 사용자에게 노출되고, 실제 반응 데이터를 확인할 수 있는 제휴 채널" }
 ];
 
-const primaryMailto = "mailto:partnership@popkit.ai?subject=POPKIT%20기업%20도입%20상담";
-const partnerMailto = "mailto:partnership@popkit.ai?subject=POPKIT%20제휴%20문의";
+const primaryMailto = "mailto:kkcm1002@gmail.com?subject=POPKIT%20기업%20도입%20상담";
+const partnerMailto = "mailto:kkcm1002@gmail.com?subject=POPKIT%20제휴%20문의";
 
 export default function BusinessPage() {
   return (
