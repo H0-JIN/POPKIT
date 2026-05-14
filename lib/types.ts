@@ -53,6 +53,8 @@ export type ToolUpdate = {
 export type Review = {
   review_id: string;
   tool_id: string;
+  tool_slug?: string;
+  tool_name?: string;
   user_role: string;
   rating_total: number;
   rating_work_usefulness: number;
