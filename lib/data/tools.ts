@@ -86,7 +86,12 @@ const toolNameAliases: Record<string, string> = {
   tomeai: "tome",
   perplexity: "perplexity",
   claude: "claude",
-  chatgpt: "chatgpt"
+  chatgpt: "chatgpt",
+  napkin: "napkin-ai",
+  napkinai: "napkin-ai",
+  kling: "kling-ai",
+  klingai: "kling-ai",
+  lavable: "lovable"
 };
 
 const zeroRatingState = {
