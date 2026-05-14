@@ -58,6 +58,7 @@ const aliases: Record<string, string[]> = {
 };
 
 const contentOverlaySheetNames = ["Core30_Content", "Extended_Content"] as const;
+const contentOverlayShortDescriptionKey = "__content_overlay_short_description";
 
 const contentOverlayFields = [
   "official_url",
@@ -233,7 +234,10 @@ function buildContentOverlayMap(rows: SheetRow[]) {
     const overlay: SheetRow = {};
     contentOverlayFields.forEach((field) => {
       const fieldValue = value(row, field);
-      if (fieldValue) overlay[field] = fieldValue;
+      if (!fieldValue) return;
+
+      overlay[field] = fieldValue;
+      if (field === "short_description") overlay[contentOverlayShortDescriptionKey] = fieldValue;
     });
 
     if (Object.keys(overlay).length) {
@@ -274,7 +278,10 @@ function completionScore(tool: Tool) {
 function mergeToolRecords(primary: Tool, secondary: Tool): Tool {
   const base = completionScore(secondary) > completionScore(primary) ? secondary : primary;
   const fallback = base === primary ? secondary : primary;
-  const shortDescription = !isPlaceholderDescription(base.short_description) ? base.short_description : fallback.short_description;
+  const primaryShortDescription = !isPlaceholderDescription(primary.short_description) ? primary.short_description : "";
+  const fallbackShortDescription = !isPlaceholderDescription(fallback.short_description) ? fallback.short_description : "";
+  const baseShortDescription = !isPlaceholderDescription(base.short_description) ? base.short_description : "";
+  const shortDescription = primaryShortDescription || fallbackShortDescription || baseShortDescription || base.short_description;
 
   return {
     ...base,
@@ -476,7 +483,8 @@ function adapt(row: SheetRow, index: number): Tool | null {
   const cautions = list(value(row, "cautions"));
   const youtubeSummary = list(value(row, "youtube_summary"));
   const officialUrl = normalizeOfficialUrl(value(row, "official_url"), seed?.official_url || "#");
-  const sourceShortDescription = descriptionValue(row) || seed?.short_description || "";
+  const overlayShortDescription = row[contentOverlayShortDescriptionKey]?.trim() ?? "";
+  const sourceShortDescription = overlayShortDescription || descriptionValue(row) || seed?.short_description || "";
   const shortDescription = fallbackShortDescription(name, category, subCategory, sourceShortDescription);
   const normalizedUsageSteps = usageSteps.length ? usageSteps : seed?.usage_steps?.length ? seed.usage_steps : defaultUsageSteps;
   const normalizedStrengths = strengths.length ? strengths : seed?.strengths?.length ? seed.strengths : seed?.pros?.length ? seed.pros : categoryTone(category).strengths;
