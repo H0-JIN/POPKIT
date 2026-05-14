@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Sidebar } from "@/components/Sidebar";
 import { getToolBySlug, getTools } from "@/lib/data/tools";
 import { getUpdatesByToolId } from "@/lib/data/updates";
 import { applyReviewSummaryToTool, getReviewsByTool } from "@/lib/data/reviews";
 import { SITE_NAME } from "@/lib/constants";
 import { ToolDetailHeader } from "@/components/ToolDetailHeader";
 import { ToolDetailTabs } from "@/components/ToolDetailTabs";
+import { HeaderActions } from "@/components/HeaderActions";
 
 export async function generateStaticParams() {
   const tools = await getTools();
@@ -31,5 +33,5 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
   const currentTool = tool;
   const [updates, reviews] = await Promise.all([getUpdatesByToolId(currentTool.tool_id), getReviewsByTool(currentTool)]);
   const reviewAwareTool = applyReviewSummaryToTool(currentTool, reviews);
-  return <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl"><Link href="/" className="mb-5 inline-flex text-sm font-semibold text-zinc-400 hover:text-cyan-200">← 목록으로</Link><ToolDetailHeader tool={reviewAwareTool} /><ToolDetailTabs tool={reviewAwareTool} updates={updates} reviews={reviews} /></div></main>;
+  return <main className="flex min-h-screen"><Sidebar activeCategory={reviewAwareTool.category} activeSubCategory={reviewAwareTool.sub_category} /><section className="min-w-0 flex-1 px-4 py-5 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl"><HeaderActions /><Link href="/" className="mb-4 inline-flex rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-sm font-semibold text-zinc-400 hover:border-cyan-200/40 hover:text-cyan-200">← 목록으로</Link><ToolDetailHeader tool={reviewAwareTool} /><ToolDetailTabs tool={reviewAwareTool} updates={updates} reviews={reviews} /></div></section></main>;
 }

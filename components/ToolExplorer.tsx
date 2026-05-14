@@ -8,6 +8,7 @@ import { SortDropdown } from "@/components/SortDropdown";
 import { FilterChips } from "@/components/FilterChips";
 import { ToolCard } from "@/components/ToolCard";
 import { EmptyState } from "@/components/EmptyState";
+import { HeaderActions } from "@/components/HeaderActions";
 
 export function ToolExplorer({ tools, title, description, category, subCategory }: { tools: Tool[]; title: string; description: string; category?: string; subCategory?: string }) {
   const [query, setQuery] = useState("");
@@ -19,6 +20,7 @@ export function ToolExplorer({ tools, title, description, category, subCategory 
   return (
     <section className="flex-1 px-4 py-5 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
+        <HeaderActions />
         <div className="mb-6 rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 sm:p-8">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
             <div><p className="text-sm font-semibold text-cyan-200">Curated AI tools for planners, designers, developers</p><h1 className="mt-3 max-w-3xl whitespace-pre-line text-balance text-3xl font-black tracking-tight sm:text-5xl sm:leading-tight">{title}</h1><p className="mt-3 max-w-2xl text-zinc-400">{description}</p></div>
