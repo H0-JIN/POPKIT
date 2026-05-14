@@ -69,11 +69,6 @@ function hasRatingInput(value: unknown) {
   return !(value === undefined || value === null || value === "");
 }
 
-function optionalRating(value: unknown) {
-  if (value === undefined || value === null || value === "") return 0;
-  return clampRating(value);
-}
-
 export function validateReviewInput(body: unknown): { ok: true; value: ReviewInput } | { ok: false; error: string } {
   if (!body || typeof body !== "object") return { ok: false, error: "리뷰 요청 형식이 올바르지 않습니다." };
   const data = body as Record<string, unknown>;
