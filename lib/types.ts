@@ -57,11 +57,11 @@ export type Review = {
   tool_name?: string;
   user_role: string;
   rating_total: number;
-  rating_work_usefulness: number;
-  rating_output_quality: number;
-  rating_difficulty: number;
-  rating_price: number;
-  rating_korean_support: number;
+  rating_work_usefulness: number | null;
+  rating_output_quality: number | null;
+  rating_difficulty: number | null;
+  rating_price: number | null;
+  rating_korean_support: number | null;
   comment: string;
   helpful_count: number;
   approved: boolean;

@@ -5,16 +5,17 @@ import type { Review, Tool } from "@/lib/types";
 import { ReviewCard } from "@/components/ReviewCard";
 import { BestComments } from "@/components/BestComments";
 import { LoadMoreButton } from "@/components/LoadMoreButton";
+import { StarRatingInput } from "@/components/StarRatingInput";
 import { exampleReviews } from "@/lib/data/seed";
 
 type FormState = {
   user_role: string;
-  rating_total: string;
-  rating_work_usefulness: string;
-  rating_output_quality: string;
-  rating_difficulty: string;
-  rating_price: string;
-  rating_korean_support: string;
+  rating_total: number | null;
+  rating_work_usefulness: number | null;
+  rating_output_quality: number | null;
+  rating_difficulty: number | null;
+  rating_price: number | null;
+  rating_korean_support: number | null;
   comment: string;
 };
 
@@ -22,12 +23,12 @@ type RatingKey = keyof Pick<Review, "rating_total" | "rating_work_usefulness" | 
 
 const initialForm: FormState = {
   user_role: "",
-  rating_total: "",
-  rating_work_usefulness: "",
-  rating_output_quality: "",
-  rating_difficulty: "",
-  rating_price: "",
-  rating_korean_support: "",
+  rating_total: null,
+  rating_work_usefulness: null,
+  rating_output_quality: null,
+  rating_difficulty: null,
+  rating_price: null,
+  rating_korean_support: null,
   comment: ""
 };
 
@@ -55,14 +56,13 @@ function validateForm(form: FormState) {
 }
 
 function averageRating(reviews: Review[], field: RatingKey) {
-  const ratedReviews = reviews.filter((review) => review[field] > 0);
-  return ratedReviews.length ? ratedReviews.reduce((acc, review) => acc + review[field], 0) / ratedReviews.length : 0;
+  const ratedReviews = reviews.filter((review) => typeof review[field] === "number" && review[field] > 0);
+  return ratedReviews.length ? ratedReviews.reduce((acc, review) => acc + (review[field] ?? 0), 0) / ratedReviews.length : 0;
 }
 
 function optionalRating(value: string) {
   return value ? Number(value) : 0;
 }
-
 export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReviews: Review[] }) {
   const [localReviews, setLocalReviews] = useState<Review[]>([]);
   const [form, setForm] = useState<FormState>(initialForm);
@@ -169,13 +169,7 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
         <h3 className="text-lg font-bold">리뷰 작성</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <input name="role" value={form.user_role} onChange={(event) => setForm((prev) => ({ ...prev, user_role: event.target.value }))} placeholder="직무 (예: 기획자)" className="rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 outline-none" />
-          <label className="rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-400">
-            <span className="mb-2 block">종합 평점</span>
-            <select name="rating_total" value={form.rating_total} onChange={(event) => setForm((prev) => ({ ...prev, rating_total: event.target.value }))} className="w-full bg-transparent font-bold text-white outline-none">
-              <option value="">선택</option>
-              {[5, 4, 3, 2, 1].map((score) => <option key={score} value={score}>{score}점</option>)}
-            </select>
-          </label>
+          <StarRatingInput label="종합 평점" name="rating_total" value={form.rating_total} onChange={(rating) => setForm((prev) => ({ ...prev, rating_total: rating }))} required />
         </div>
         <button type="button" onClick={() => setShowDetailedRatings((open) => !open)} className="mt-3 rounded-2xl border border-white/10 px-4 py-2 text-sm font-bold text-cyan-200 hover:bg-white/5" aria-expanded={showDetailedRatings}>
           {showDetailedRatings ? "세부 평가 접기" : "더 자세히 평가하기"}
@@ -183,13 +177,7 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
         {showDetailedRatings && (
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {detailedRatingFields.map(([key, label]) => (
-              <label key={key} className="rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-zinc-400">
-                <span className="mb-2 block">{label} <span className="text-zinc-600">선택</span></span>
-                <select name={key} value={form[key]} onChange={(event) => setForm((prev) => ({ ...prev, [key]: event.target.value }))} className="w-full bg-transparent font-bold text-white outline-none">
-                  <option value="">선택 안 함</option>
-                  {[5, 4, 3, 2, 1].map((score) => <option key={score} value={score}>{score}점</option>)}
-                </select>
-              </label>
+              <StarRatingInput key={key} label={label} name={key} value={form[key]} onChange={(rating) => setForm((prev) => ({ ...prev, [key]: rating }))} />
             ))}
           </div>
         )}

@@ -26,11 +26,11 @@ export type ReviewInput = {
   tool_name: string;
   user_role: string;
   rating_total: number;
-  rating_work_usefulness: number;
-  rating_output_quality: number;
-  rating_difficulty: number;
-  rating_price: number;
-  rating_korean_support: number;
+  rating_work_usefulness: number | null;
+  rating_output_quality: number | null;
+  rating_difficulty: number | null;
+  rating_price: number | null;
+  rating_korean_support: number | null;
   comment: string;
 };
 
@@ -56,8 +56,17 @@ function bool(value: string | undefined) {
 
 function clampRating(value: unknown) {
   const rating = Number(value);
-  if (!Number.isFinite(rating) || rating < 1 || rating > 5) return null;
-  return Math.round(rating * 10) / 10;
+  if (!Number.isFinite(rating) || rating < 0.5 || rating > 5) return null;
+  return Math.round(rating * 2) / 2;
+}
+
+function optionalRating(value: unknown) {
+  if (value === undefined || value === null || value === "") return null;
+  return clampRating(value);
+}
+
+function hasRatingInput(value: unknown) {
+  return !(value === undefined || value === null || value === "");
 }
 
 function optionalRating(value: unknown) {
@@ -84,7 +93,13 @@ export function validateReviewInput(body: unknown): { ok: true; value: ReviewInp
   const rating_price = optionalRating(data.rating_price);
   const rating_korean_support = optionalRating(data.rating_korean_support);
   if (rating_total === null) return { ok: false, error: "종합 평점을 1~5점으로 선택해주세요." };
-  if ([rating_work_usefulness, rating_output_quality, rating_difficulty, rating_price, rating_korean_support].some((rating) => rating === null)) {
+  if ([
+    [data.rating_work_usefulness, rating_work_usefulness],
+    [data.rating_output_quality, rating_output_quality],
+    [data.rating_difficulty, rating_difficulty],
+    [data.rating_price, rating_price],
+    [data.rating_korean_support, rating_korean_support]
+  ].some(([raw, rating]) => hasRatingInput(raw) && rating === null)) {
     return { ok: false, error: "항목별 평점은 선택 시 1~5점이어야 합니다." };
   }
 
@@ -102,11 +117,11 @@ function reviewFromRow(row: Record<string, string>, index: number): Review {
     tool_name: row.tool_name || "",
     user_role: row.user_role || "사용자",
     rating_total: num(row.rating_total, 0),
-    rating_work_usefulness: num(row.rating_work_usefulness, 0),
-    rating_output_quality: num(row.rating_output_quality, 0),
-    rating_difficulty: num(row.rating_difficulty, 0),
-    rating_price: num(row.rating_price, 0),
-    rating_korean_support: num(row.rating_korean_support, 0),
+    rating_work_usefulness: optionalRating(row.rating_work_usefulness),
+    rating_output_quality: optionalRating(row.rating_output_quality),
+    rating_difficulty: optionalRating(row.rating_difficulty),
+    rating_price: optionalRating(row.rating_price),
+    rating_korean_support: optionalRating(row.rating_korean_support),
     comment: row.comment || "",
     helpful_count: num(row.helpful_count, 0),
     approved: bool(row.approved),
@@ -131,8 +146,8 @@ export async function getReviewsByToolId(toolId: string) {
 export function getReviewSummary(reviews: Review[]): ReviewSummary {
   const count = reviews.length;
   const average = (field: keyof Pick<Review, "rating_total" | "rating_work_usefulness" | "rating_output_quality" | "rating_difficulty" | "rating_price" | "rating_korean_support">) => {
-    const ratedReviews = reviews.filter((review) => review[field] > 0);
-    return ratedReviews.length ? ratedReviews.reduce((acc, review) => acc + review[field], 0) / ratedReviews.length : 0;
+    const ratedReviews = reviews.filter((review) => typeof review[field] === "number" && review[field] > 0);
+    return ratedReviews.length ? ratedReviews.reduce((acc, review) => acc + (review[field] ?? 0), 0) / ratedReviews.length : 0;
   };
   return {
     count,
