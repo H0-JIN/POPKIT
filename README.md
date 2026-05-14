@@ -46,12 +46,15 @@ npm run build
 `.env.local` 예시:
 
 ```bash
-GOOGLE_SHEETS_ID=1_57qPpmnL66YndA1qJZRlnWzBjmNypxK_FsgyzNZPnc
-GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
+GOOGLE_SHEETS_ID=10xqsKKL21u0WkFRqjUBjW2Gw_Tk24owzNTEZsFQnJTI
+GOOGLE_SHEETS_API_KEY=선택_값_읽기용
+GOOGLE_SERVICE_ACCOUNT_EMAIL=서비스_계정_이메일
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
-- `GOOGLE_SHEETS_API_KEY`가 있으면 Google Sheets API를 우선 사용합니다.
+- `GOOGLE_SHEETS_API_KEY`가 있으면 Google Sheets 읽기에 Google Sheets API를 우선 사용합니다.
 - API key가 없거나 실패하면 public CSV URL로 fallback합니다.
+- 리뷰 저장과 추천 수 영구 저장은 서비스 계정 기반 쓰기 권한을 사용하므로 `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEETS_ID`가 필요합니다.
 - API/CSV 모두 실패하면 `lib/data/seed.ts`의 mock seed data로 사이트가 깨지지 않게 렌더링합니다.
 
 ## Google Sheets 권장 컬럼 구조
@@ -93,11 +96,40 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 
 ### Sheet 3: `Reviews`
 
-`review_id`, `tool_id`, `user_role`, `rating_total`, `rating_work_usefulness`, `rating_output_quality`, `rating_difficulty`, `rating_price`, `rating_korean_support`, `comment`, `helpful_count`, `approved`, `created_at`
+`review_id`, `tool_id`, `tool_slug`, `tool_name`, `user_role`, `rating_total`, `rating_work_usefulness`, `rating_output_quality`, `rating_difficulty`, `rating_price`, `rating_korean_support`, `comment`, `helpful_count`, `approved`, `created_at`
 
 ### Sheet 4: `Categories`
 
 `category_id`, `category_name`, `parent_category`, `sort_order`
+
+
+## 리뷰 저장용 Google Sheets 쓰기 권한 설정
+
+리뷰 작성 폼은 클라이언트에서 Google Sheets에 직접 접근하지 않고 `POST /api/reviews` 서버 API를 통해 `Reviews` 탭에 행을 추가합니다. 아래 순서대로 서비스 계정을 준비하면 비개발자도 Vercel에 값을 입력해 리뷰 저장을 활성화할 수 있습니다.
+
+1. Google Cloud Console에서 프로젝트를 열고 **IAM 및 관리자 → 서비스 계정**으로 이동합니다.
+2. **서비스 계정 만들기**를 누른 뒤 이름을 입력하고 생성합니다. 이 프로젝트에서는 별도 역할을 부여하지 않아도 됩니다. 실제 쓰기 권한은 Google Sheet 공유 설정으로 제어합니다.
+3. 생성된 서비스 계정을 열고 **키 → 키 추가 → 새 키 만들기 → JSON**을 선택해 키 파일을 내려받습니다.
+4. JSON 파일의 `client_email` 값을 복사합니다. 이 값이 `GOOGLE_SERVICE_ACCOUNT_EMAIL`입니다.
+5. POPKIT 원본 Google Sheet를 열고 우측 상단 **공유** 버튼을 누른 뒤, 4번의 서비스 계정 이메일을 **편집자** 권한으로 추가합니다.
+6. Vercel Project Settings → Environment Variables에 아래 값을 추가합니다.
+
+```bash
+GOOGLE_SHEETS_ID=10xqsKKL21u0WkFRqjUBjW2Gw_Tk24owzNTEZsFQnJTI
+GOOGLE_SERVICE_ACCOUNT_EMAIL=서비스_계정_JSON의_client_email
+GOOGLE_PRIVATE_KEY=서비스_계정_JSON의_private_key
+GOOGLE_SHEETS_API_KEY=선택_값_읽기용
+```
+
+`GOOGLE_PRIVATE_KEY`는 JSON의 `private_key` 전체를 넣습니다. Vercel 입력창에서 줄바꿈이 깨지는 경우 `-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n`처럼 줄바꿈을 `\n` 문자로 바꿔 입력해도 됩니다. 앱에서는 저장 전에 `\n`을 실제 줄바꿈으로 복원합니다.
+
+`Reviews` 탭의 1행 컬럼명은 반드시 아래 순서로 만듭니다.
+
+```text
+review_id, tool_id, tool_slug, tool_name, user_role, rating_total, rating_work_usefulness, rating_output_quality, rating_difficulty, rating_price, rating_korean_support, comment, helpful_count, approved, created_at
+```
+
+각 리뷰는 저장 시 `helpful_count=0`, `approved=true`, `created_at=ISO 문자열`로 추가됩니다. 사이트에는 `approved=true`인 리뷰만 공개되며, 상세 페이지에서는 `tool_slug` 또는 `tool_id`가 현재 AI와 일치하는 리뷰만 표시합니다.
 
 ## 데이터 추가 방법
 
@@ -133,11 +165,14 @@ GOOGLE_SHEETS_API_KEY=사용자_입력_API_KEY
 Google Sheets를 연결하지 않아도 배포는 가능합니다. 연결하려면 Vercel Project Settings → Environment Variables에 아래 값을 추가하세요.
 
 ```bash
-GOOGLE_SHEETS_ID=1_57qPpmnL66YndA1qJZRlnWzBjmNypxK_FsgyzNZPnc
+GOOGLE_SHEETS_ID=10xqsKKL21u0WkFRqjUBjW2Gw_Tk24owzNTEZsFQnJTI
 GOOGLE_SHEETS_API_KEY=선택_값
+GOOGLE_SERVICE_ACCOUNT_EMAIL=서비스_계정_이메일
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
 - `GOOGLE_SHEETS_API_KEY`가 없으면 public CSV 방식을 시도합니다.
+- 리뷰 저장에는 `GOOGLE_SERVICE_ACCOUNT_EMAIL`과 `GOOGLE_PRIVATE_KEY`가 필요하며, 해당 서비스 계정 이메일을 Google Sheet에 편집자로 공유해야 합니다.
 - API/CSV 접근이 실패하면 seed data로 fallback됩니다.
 - Google Sheet가 비공개이면 API key 권한과 Sheets API 활성화를 확인해야 합니다.
 

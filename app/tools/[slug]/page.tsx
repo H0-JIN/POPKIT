@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getToolBySlug, getTools } from "@/lib/data/tools";
 import { getUpdatesByToolId } from "@/lib/data/updates";
-import { getReviewsByToolId } from "@/lib/data/reviews";
+import { applyReviewSummaryToTool, getReviewsByTool } from "@/lib/data/reviews";
 import { SITE_NAME } from "@/lib/constants";
 import { ToolDetailHeader } from "@/components/ToolDetailHeader";
 import { ToolDetailTabs } from "@/components/ToolDetailTabs";
@@ -29,6 +29,7 @@ export default async function ToolDetailPage({ params }: { params: Promise<{ slu
   const tool = await getToolBySlug(slug);
   if (!tool) return notFound();
   const currentTool = tool;
-  const [updates, reviews] = await Promise.all([getUpdatesByToolId(currentTool.tool_id), getReviewsByToolId(currentTool.tool_id)]);
-  return <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl"><Link href="/" className="mb-5 inline-flex text-sm font-semibold text-zinc-400 hover:text-cyan-200">← 목록으로</Link><ToolDetailHeader tool={currentTool} /><ToolDetailTabs tool={currentTool} updates={updates} reviews={reviews} /></div></main>;
+  const [updates, reviews] = await Promise.all([getUpdatesByToolId(currentTool.tool_id), getReviewsByTool(currentTool)]);
+  const reviewAwareTool = applyReviewSummaryToTool(currentTool, reviews);
+  return <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8"><div className="mx-auto max-w-6xl"><Link href="/" className="mb-5 inline-flex text-sm font-semibold text-zinc-400 hover:text-cyan-200">← 목록으로</Link><ToolDetailHeader tool={reviewAwareTool} /><ToolDetailTabs tool={reviewAwareTool} updates={updates} reviews={reviews} /></div></main>;
 }
