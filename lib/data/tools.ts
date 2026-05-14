@@ -57,7 +57,7 @@ const aliases: Record<string, string[]> = {
   alternatives: ["alternatives", "유사 AI"]
 };
 
-const contentOverlaySheetNames = ["Core30_Content"] as const;
+const contentOverlaySheetNames = ["Core30_Content", "Extended_Content"] as const;
 
 const contentOverlayFields = [
   "official_url",
@@ -72,10 +72,7 @@ const contentOverlayFields = [
   "cautions",
   "usage_steps",
   "youtube_url",
-  "youtube_summary",
-  "rating_average",
-  "rating_count",
-  "comment_count"
+  "youtube_summary"
 ] as const;
 
 const toolNameAliases: Record<string, string> = {
@@ -239,7 +236,11 @@ function buildContentOverlayMap(rows: SheetRow[]) {
       if (fieldValue) overlay[field] = fieldValue;
     });
 
-    if (Object.keys(overlay).length) overlays.set(matchKey, overlay);
+    if (Object.keys(overlay).length) {
+      const existingOverlay = overlays.get(matchKey);
+      // Earlier sheet names have higher priority, while later sheets can fill missing fields.
+      overlays.set(matchKey, existingOverlay ? { ...overlay, ...existingOverlay } : overlay);
+    }
   });
 
   return overlays;
