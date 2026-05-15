@@ -597,7 +597,7 @@ function adapt(row: SheetRow, index: number): Tool | null {
   };
 }
 
-export async function getTools(sort: SortKey = "popular") {
+export async function getTools(sort: SortKey = "views") {
   const [mainRows, contentRows, englishContentRows] = await Promise.all([
     fetchSheetRows("Tools"),
     fetchContentOverlayRows(contentOverlaySheetNames),

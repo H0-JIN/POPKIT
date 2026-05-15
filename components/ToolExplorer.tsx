@@ -15,7 +15,7 @@ import { useLanguage } from "@/lib/i18n";
 export function ToolExplorer({ tools, title, description, category, subCategory }: { tools: Tool[]; title?: string; description?: string; category?: string; subCategory?: string }) {
   const { t, locale } = useLanguage();
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<SortKey>("popular");
+  const [sort, setSort] = useState<SortKey>("views");
   const [filters, setFilters] = useState<string[]>([]);
   const filtered = useMemo(() => sortTools(tools.filter((tool) => matchesCategoryPath(tool, category, subCategory) && matchesTool(tool, query, filters)), sort), [tools, category, subCategory, query, filters, sort]);
   const toggle = (filter: string) => setFilters((prev) => prev.includes(filter) ? prev.filter((item) => item !== filter) : [...prev, filter]);

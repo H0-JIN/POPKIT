@@ -30,20 +30,25 @@ export function daysAgo(dateString: string) {
   return `업데이트 ${Math.floor(days / 365)}년 전`;
 }
 
-export function recentUpdateBonus(dateString: string) {
-  const days = Math.floor((Date.now() - new Date(dateString).getTime()) / 86400000);
-  if (Number.isNaN(days)) return 0;
-  if (days <= 7) return 30;
-  if (days <= 30) return 20;
-  if (days <= 90) return 10;
-  return 0;
+function ratingSortScore(tool: Tool) {
+  return tool.rating_average * Math.log10(tool.rating_count + 10);
 }
 
-export function recommendationScore(tool: Tool) {
-  const manualScore = tool.popularity_score ?? 0;
-  const engagementScore = tool.rating_count * 0.2 + tool.comment_count * 0.35;
-  const qualityScore = tool.rating_average * 18;
-  return manualScore + engagementScore + qualityScore + recentUpdateBonus(tool.last_update_date);
+function dateSortValue(dateString: string) {
+  const value = new Date(dateString).getTime();
+  return Number.isNaN(value) ? 0 : value;
+}
+
+function compareByRating(a: Tool, b: Tool) {
+  return ratingSortScore(b) - ratingSortScore(a);
+}
+
+function compareByUpdated(a: Tool, b: Tool) {
+  return dateSortValue(b.last_update_date) - dateSortValue(a.last_update_date);
+}
+
+function compareByName(a: Tool, b: Tool) {
+  return a.tool_name.localeCompare(b.tool_name);
 }
 
 
@@ -63,11 +68,16 @@ export function matchesCategoryPath(tool: Tool, category?: string, subCategory?:
 
 export function sortTools(tools: Tool[], sort: SortKey) {
   return [...tools].sort((a, b) => {
-    if (sort === "updated") return new Date(b.last_update_date).getTime() - new Date(a.last_update_date).getTime();
-    if (sort === "rating") return (b.rating_average * Math.log10(b.rating_count + 10)) - (a.rating_average * Math.log10(a.rating_count + 10));
-    if (sort === "comments") return b.comment_count - a.comment_count;
-    if (sort === "recent") return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    return recommendationScore(b) - recommendationScore(a);
+    const totalViewDiff = (b.total_view_count ?? 0) - (a.total_view_count ?? 0);
+    const ratingDiff = compareByRating(a, b);
+    const updatedDiff = compareByUpdated(a, b);
+
+    if (sort === "views") return totalViewDiff || ratingDiff || updatedDiff || compareByName(a, b);
+    if (sort === "rating") return ratingDiff || totalViewDiff || updatedDiff || compareByName(a, b);
+    if (sort === "updated") return updatedDiff || totalViewDiff || ratingDiff || compareByName(a, b);
+
+    const recentViewDiff = (b.recent_24h_view_count ?? 0) - (a.recent_24h_view_count ?? 0);
+    return recentViewDiff || totalViewDiff || ratingDiff || updatedDiff || compareByName(a, b);
   });
 }
 

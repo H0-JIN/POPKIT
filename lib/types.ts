@@ -1,4 +1,4 @@
-export type SortKey = "popular" | "updated" | "rating" | "comments" | "recent";
+export type SortKey = "views" | "rating" | "updated" | "trending";
 
 export type LocalizedToolContent = {
   editor_quote?: string;
@@ -39,6 +39,8 @@ export type Tool = {
   rating_count: number;
   comment_count: number;
   popularity_score?: number;
+  total_view_count?: number;
+  recent_24h_view_count?: number;
   last_update_date: string;
   created_at: string;
   is_featured: boolean;

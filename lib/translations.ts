@@ -7,7 +7,7 @@ export const messages = {
       description: "기획, 디자인, 개발, 생산성 AI를 평점·댓글·공식 업데이트 기준으로 비교하고 상세 사용법까지 확인할 수 있습니다."
     },
     search: { srLabel: "검색", placeholder: "AI 이름, 용도, 태그 검색" },
-    sort: { popular: "추천순", updated: "최신 업데이트순", rating: "평점순", comments: "댓글 많은 순", recent: "최근 등록순" },
+    sort: { views: "조회순", rating: "별점순", updated: "업데이트순", trending: "오늘 핫한순" },
     filters: { "무료": "무료", "부분 유료": "부분 유료", "유료": "유료", "초보자 추천": "초보자 추천", "한국어 지원": "한국어 지원" },
     list: { count: (count: number) => `${count}개 AI 툴`, compare: "평점 · 댓글 · 업데이트 기준 비교" },
     navigation: {
@@ -47,7 +47,7 @@ export const messages = {
     common: { business: "Business", backToList: "Back to list", loadingMore: "Load more" },
     hero: { eyebrow: "Curated AI tools for planners, designers, and developers", title: "Explore AI tools faster by role and task", description: "Compare AI tools by ratings, reviews, and official updates, then check practical use cases in detail." },
     search: { srLabel: "Search", placeholder: "Search by AI name, use case, or tag" },
-    sort: { popular: "Recommended", updated: "Recently updated", rating: "Top rated", comments: "Most reviewed", recent: "Recently added" },
+    sort: { views: "Most viewed", rating: "Top rated", updated: "Recently updated", trending: "Trending today" },
     filters: { "무료": "Free", "부분 유료": "Freemium", "유료": "Paid", "초보자 추천": "Beginner-friendly", "한국어 지원": "Korean supported" },
     list: { count: (count: number) => `${count} AI tools`, compare: "Compare by ratings, reviews, and updates" },
     navigation: {

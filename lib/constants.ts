@@ -8,11 +8,10 @@ export const NAVIGATION = [
 ];
 
 export const SORT_OPTIONS = [
-  { value: "popular", label: "추천순" },
-  { value: "updated", label: "최신 업데이트순" },
-  { value: "rating", label: "평점순" },
-  { value: "comments", label: "댓글 많은 순" },
-  { value: "recent", label: "최근 등록순" }
+  { value: "views", label: "조회순" },
+  { value: "rating", label: "별점순" },
+  { value: "updated", label: "업데이트순" },
+  { value: "trending", label: "오늘 핫한순" }
 ] as const;
 
 export const FILTER_OPTIONS = ["무료", "부분 유료", "유료", "초보자 추천", "한국어 지원"];
