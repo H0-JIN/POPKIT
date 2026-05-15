@@ -9,7 +9,7 @@ import { LoadMoreButton } from "@/components/LoadMoreButton";
 import { StarRatingInput } from "@/components/StarRatingInput";
 import { MascotImage } from "@/components/MascotImage";
 import { exampleReviews } from "@/lib/data/seed";
-import { isReviewRole, REVIEW_ROLE_OPTIONS } from "@/lib/reviewRoles";
+import { getReviewRoleLabel, getReviewRoleMascot, isReviewRole, REVIEW_ROLE_OPTIONS, type ReviewRole } from "@/lib/reviewRoles";
 
 type FormState = {
   user_role: string;
@@ -46,6 +46,25 @@ function optionalRating(value: number | null) {
   return value === null ? null : value;
 }
 
+type RoleRatingSummary = {
+  role: ReviewRole;
+  reviewCount: number;
+  averageRatingTotal: number;
+};
+
+function summarizeRatingsByRole(reviews: Review[]): RoleRatingSummary[] {
+  return REVIEW_ROLE_OPTIONS.map((role) => {
+    const roleReviews = reviews.filter((review) => review.user_role === role && typeof review.rating_total === "number" && review.rating_total > 0);
+    const averageRatingTotal = roleReviews.length ? roleReviews.reduce((acc, review) => acc + review.rating_total, 0) / roleReviews.length : 0;
+
+    return {
+      role,
+      reviewCount: roleReviews.length,
+      averageRatingTotal
+    };
+  });
+}
+
 export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReviews: Review[] }) {
   const { locale, t } = useLanguage();
   const detailedRatingLabels = {
@@ -75,6 +94,7 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
       rating_korean_support: averageRating(actualReviews, "rating_korean_support")
     };
   }, [actualReviews]);
+  const roleRatingSummary = useMemo(() => summarizeRatingsByRole(actualReviews), [actualReviews]);
   const exampleBestReviews = useMemo(() => exampleReviews.map((review) => ({ ...review, review_id: `${review.review_id}_${tool.tool_id}`, tool_id: tool.tool_id, tool_slug: tool.slug, tool_name: tool.tool_name })), [tool]);
 
   const validateForm = (currentForm: FormState) => {
@@ -153,6 +173,35 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
           )}
         </div>
       </section>
+
+      {hasReviews && (
+        <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h3 className="text-lg font-black text-white">{t.reviews.roleRatingsTitle}</h3>
+              <p className="mt-1 text-sm text-zinc-500">{t.reviews.roleRatingsDescription}</p>
+            </div>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {roleRatingSummary.map((roleSummary) => (
+              <article key={roleSummary.role} className="rounded-2xl border border-white/10 bg-zinc-950/50 p-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-12 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10">
+                    <MascotImage type={getReviewRoleMascot(roleSummary.role)} size="lg" className="size-9" />
+                  </span>
+                  <div>
+                    <h4 className="font-black text-white">{getReviewRoleLabel(roleSummary.role, locale)}</h4>
+                    <p className="text-xs font-semibold text-zinc-500">{t.reviews.roleReviewCount(roleSummary.reviewCount)}</p>
+                  </div>
+                </div>
+                <div className="mt-4 text-2xl font-black text-amber-200">
+                  {roleSummary.reviewCount > 0 ? `${roleSummary.averageRatingTotal.toFixed(1)} ★` : t.reviews.noRoleRatings}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
       {hasReviews ? <BestComments reviews={actualReviews} /> : <BestComments reviews={exampleBestReviews} />}
       <section>
         <h3 className="text-lg font-bold">{t.reviews.all}</h3>
