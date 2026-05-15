@@ -1,6 +1,6 @@
 import { fetchSheetRows, type SheetRow } from "@/lib/googleSheets";
 import { seedTools } from "@/lib/data/seed";
-import type { SortKey, Tool } from "@/lib/types";
+import type { LocalizedToolContent, SortKey, Tool } from "@/lib/types";
 import { sortTools } from "@/lib/utils";
 
 const aliases: Record<string, string[]> = {
@@ -58,6 +58,7 @@ const aliases: Record<string, string[]> = {
 };
 
 const contentOverlaySheetNames = ["Core30_Content", "Extended_Content"] as const;
+const englishContentOverlaySheetNames = ["Core30_Content_EN", "Extended_Content_EN"] as const;
 const contentOverlayShortDescriptionKey = "__content_overlay_short_description";
 
 const contentOverlayFields = [
@@ -73,6 +74,19 @@ const contentOverlayFields = [
   "cautions",
   "usage_steps",
   "youtube_url",
+  "youtube_summary"
+] as const;
+
+
+const localizedContentOverlayFields = [
+  "editor_quote",
+  "short_description",
+  "full_description",
+  "recommended_use_cases",
+  "recommended_users",
+  "strengths",
+  "cautions",
+  "usage_steps",
   "youtube_summary"
 ] as const;
 
@@ -250,6 +264,43 @@ function buildContentOverlayMap(rows: SheetRow[]) {
   return overlays;
 }
 
+function buildLocalizedContentOverlayMap(rows: SheetRow[]) {
+  const overlays = new Map<string, LocalizedToolContent>();
+
+  rows.forEach((row) => {
+    const name = value(row, "tool_name");
+    const matchKey = normalizeToolNameForMatch(name);
+    if (!matchKey) return;
+
+    const overlay: LocalizedToolContent = {};
+    localizedContentOverlayFields.forEach((field) => {
+      const fieldValue = value(row, field);
+      if (!fieldValue) return;
+
+      if (field === "recommended_use_cases" || field === "recommended_users" || field === "strengths" || field === "cautions" || field === "usage_steps" || field === "youtube_summary") {
+        const items = list(fieldValue);
+        if (items.length) overlay[field] = items;
+        return;
+      }
+
+      overlay[field] = fieldValue;
+    });
+
+    if (Object.keys(overlay).length) {
+      const existingOverlay = overlays.get(matchKey);
+      // Earlier sheet names have higher priority, while later sheets can fill missing fields.
+      overlays.set(matchKey, existingOverlay ? { ...overlay, ...existingOverlay } : overlay);
+    }
+  });
+
+  return overlays;
+}
+
+function attachEnglishContentOverlay(tool: Tool, overlays: Map<string, LocalizedToolContent>) {
+  const overlay = overlays.get(normalizeToolNameForMatch(tool.tool_name));
+  return overlay ? { ...tool, localized_content: { ...tool.localized_content, en: overlay } } : tool;
+}
+
 function mergeContentOverlay(row: SheetRow, overlays: Map<string, SheetRow>) {
   const matchKey = normalizeToolNameForMatch(value(row, "tool_name"));
   const overlay = matchKey ? overlays.get(matchKey) : undefined;
@@ -300,6 +351,7 @@ function mergeToolRecords(primary: Tool, secondary: Tool): Tool {
     tags: base.tags.length ? base.tags : fallback.tags,
     use_tags: base.use_tags.length ? base.use_tags : fallback.use_tags,
     official_url: base.official_url && base.official_url !== "#" ? base.official_url : fallback.official_url,
+    localized_content: { ...fallback.localized_content, ...base.localized_content },
     ...zeroRatingState
   };
 }
@@ -529,13 +581,18 @@ function adapt(row: SheetRow, index: number): Tool | null {
 }
 
 export async function getTools(sort: SortKey = "popular") {
-  const [mainRows, contentRows] = await Promise.all([
+  const [mainRows, contentRows, englishContentRows] = await Promise.all([
     fetchSheetRows("Tools"),
-    fetchContentOverlayRows(contentOverlaySheetNames)
+    fetchContentOverlayRows(contentOverlaySheetNames),
+    fetchContentOverlayRows(englishContentOverlaySheetNames)
   ]);
   const contentOverlays = buildContentOverlayMap(contentRows);
+  const englishContentOverlays = buildLocalizedContentOverlayMap(englishContentRows);
   const rows = fillDownRows(mainRows).map((row) => mergeContentOverlay(row, contentOverlays));
-  const sheetTools = rows.map(adapt).filter((tool): tool is Tool => Boolean(tool));
+  const sheetTools = rows
+    .map(adapt)
+    .filter((tool): tool is Tool => Boolean(tool))
+    .map((tool) => attachEnglishContentOverlay(tool, englishContentOverlays));
   return sortTools(dedupeToolsByName([...sheetTools, ...seedTools]), sort);
 }
 
