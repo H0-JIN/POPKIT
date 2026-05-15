@@ -8,6 +8,7 @@ import { UpdateBadge } from "@/components/UpdateBadge";
 import { useLanguage } from "@/lib/i18n";
 import { localizeToolContent } from "@/lib/localizedTool";
 import { translateCategoryPath, translateDifficulty, translatePricing } from "@/lib/displayTranslations";
+import { MascotImage } from "@/components/MascotImage";
 
 function MetaPill({ label, value }: { label: string; value: string }) {
   return <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-zinc-300"><span className="text-zinc-500">{label}</span> {value}</span>;
@@ -26,7 +27,15 @@ export function ToolDetailHeader({ tool }: { tool: Tool }) {
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap gap-2 text-xs font-semibold text-cyan-200">{categoryPaths.slice(0, 4).map((path) => <span key={path} className="rounded-full bg-cyan-300/10 px-2.5 py-1">{translateCategoryPath(path, locale)}</span>)}{categoryPaths.length > 4 ? <span className="rounded-full bg-white/5 px-2.5 py-1 text-zinc-400">+{categoryPaths.length - 4}</span> : null}</div>
             <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">{tool.tool_name}</h1>
-            {displayTool.editor_quote ? <p className="mt-4 max-w-3xl text-xl font-black leading-8 text-cyan-100 sm:text-2xl">“{displayTool.editor_quote}”</p> : null}
+            {displayTool.editor_quote ? (
+              <div className="mt-4 flex max-w-3xl items-start gap-3 rounded-3xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4 sm:gap-4">
+                <MascotImage type="editor" size="md" className="size-11 sm:size-14" />
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">{t.detail.editorQuoteLabel}</p>
+                  <p className="mt-2 text-lg font-black leading-8 text-cyan-100 sm:text-2xl">“{displayTool.editor_quote}”</p>
+                </div>
+              </div>
+            ) : null}
             <p className="mt-3 max-w-3xl text-base leading-7 text-zinc-300">{displayTool.short_description}</p>
             <div className="mt-5 flex flex-wrap items-center gap-2"><RatingBadge rating={tool.rating_average} count={tool.rating_count} /><span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-zinc-300">{t.toolCard.comments(tool.comment_count)}</span><UpdateBadge date={tool.last_update_date} /></div>
           </div>

@@ -22,7 +22,7 @@ export const messages = {
     },
     toolCard: { noRatings: "평가 전", comments: (count: number) => `댓글 ${count}`, details: "자세히 보기 →" },
     detail: {
-      officialSite: "공식 사이트 바로가기", favorite: "즐겨찾기 ☆", price: "가격", difficulty: "난이도", korean: "한국어", supported: "지원", needsCheck: "확인 필요",
+      officialSite: "공식 사이트 바로가기", favorite: "즐겨찾기 ☆", price: "가격", difficulty: "난이도", korean: "한국어", supported: "지원", needsCheck: "확인 필요", editorQuoteLabel: "에디터 한마디",
       tabs: { overview: "개요", usage: "사용법", updates: "업데이트 히스토리", reviews: "리뷰" },
       overview: {
         about: "AI 기본 소개", aboutTitle: (name: string) => `${name}를 한눈에 이해하기`, metrics: "핵심 지표", ratingCount: "평점 / 평가 수", noUserRatings: "아직 사용자 평가가 없습니다.", firstReview: "첫 리뷰를 남겨보세요.", commentCount: "댓글 수", countUnit: (count: string) => `${count}개`, updateHistory: "업데이트 히스토리", officialHistory: "공식 출처 기반 기록", recentUpdate: "최근 업데이트 시점", preparing: "정보를 준비 중입니다.", features: "주요 기능", recommendedTasks: "추천 사용 업무", recommendedUsers: "추천 사용자", strengths: "장점", cautions: "주의할 점", alternatives: "유사 AI / 대체 AI"
@@ -55,7 +55,7 @@ export const messages = {
     },
     toolCard: { noRatings: "No ratings yet", comments: (count: number) => `${count} reviews`, details: "View details →" },
     detail: {
-      officialSite: "Visit official site", favorite: "Favorite ☆", price: "Price", difficulty: "Difficulty", korean: "Korean", supported: "Supported", needsCheck: "Needs check",
+      officialSite: "Visit official site", favorite: "Favorite ☆", price: "Price", difficulty: "Difficulty", korean: "Korean", supported: "Supported", needsCheck: "Needs check", editorQuoteLabel: "Editor note",
       tabs: { overview: "Overview", usage: "How to use", updates: "Update history", reviews: "Reviews" },
       overview: { about: "About this AI", aboutTitle: (name: string) => `Understand ${name} at a glance`, metrics: "Key metrics", ratingCount: "Rating / reviews", noUserRatings: "Not enough ratings yet.", firstReview: "Be the first to leave a review.", commentCount: "Review count", countUnit: (count: string) => `${count}`, updateHistory: "Update history", officialHistory: "Official-source records", recentUpdate: "Recent update", preparing: "Information is being prepared.", features: "Key features", recommendedTasks: "Recommended tasks", recommendedUsers: "Recommended users", strengths: "Strengths", cautions: "Cautions", alternatives: "Similar / alternative tools" }
     },

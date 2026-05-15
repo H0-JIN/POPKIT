@@ -7,6 +7,7 @@ import { ReviewCard } from "@/components/ReviewCard";
 import { BestComments } from "@/components/BestComments";
 import { LoadMoreButton } from "@/components/LoadMoreButton";
 import { StarRatingInput } from "@/components/StarRatingInput";
+import { MascotImage } from "@/components/MascotImage";
 import { exampleReviews } from "@/lib/data/seed";
 
 type FormState = {
@@ -157,7 +158,10 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
         {hasReviews ? (
           <div className="mt-3 space-y-4">{actualReviews.slice(0, visible).map((review) => <ReviewCard key={review.review_id} review={review} />)}</div>
         ) : (
-          <p className="mt-3 rounded-3xl border border-dashed border-white/10 p-6 text-zinc-500">{t.reviews.noComments}</p>
+          <div className="mt-3 flex flex-col items-center gap-3 rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-6 text-center text-zinc-500 sm:flex-row sm:text-left">
+            <MascotImage type="community" size="lg" className="size-16 sm:size-20" />
+            <p className="text-sm leading-6">{t.reviews.noComments}</p>
+          </div>
         )}
         {actualReviews.length > visible && <LoadMoreButton onClick={() => setVisible((v) => v + 5)}>{t.reviews.loadMore}</LoadMoreButton>}
       </section>
