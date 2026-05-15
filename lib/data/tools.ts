@@ -103,7 +103,13 @@ const toolNameAliases: Record<string, string> = {
   napkinai: "napkin-ai",
   kling: "kling-ai",
   klingai: "kling-ai",
-  lavable: "lovable"
+  lavable: "lovable",
+  notion: "notion-ai",
+  notionai: "notion-ai",
+  krea: "krea-ai",
+  kreaai: "krea-ai",
+  codex: "openai-codex",
+  openaicodex: "openai-codex"
 };
 
 const zeroRatingState = {
@@ -326,32 +332,43 @@ function completionScore(tool: Tool) {
   ].filter(Boolean).length;
 }
 
+function canonicalSlug(primary: Tool, secondary: Tool) {
+  const matchKey = normalizeToolNameForMatch(primary.tool_name || secondary.tool_name);
+  if (primary.slug === matchKey || secondary.slug === matchKey) return matchKey;
+  return primary.slug || secondary.slug;
+}
+
 function mergeToolRecords(primary: Tool, secondary: Tool): Tool {
-  const base = completionScore(secondary) > completionScore(primary) ? secondary : primary;
-  const fallback = base === primary ? secondary : primary;
+  const fallback = secondary;
+  const preferred = completionScore(primary) >= completionScore(secondary) ? primary : secondary;
   const primaryShortDescription = !isPlaceholderDescription(primary.short_description) ? primary.short_description : "";
   const fallbackShortDescription = !isPlaceholderDescription(fallback.short_description) ? fallback.short_description : "";
-  const baseShortDescription = !isPlaceholderDescription(base.short_description) ? base.short_description : "";
-  const shortDescription = primaryShortDescription || fallbackShortDescription || baseShortDescription || base.short_description;
+  const preferredShortDescription = !isPlaceholderDescription(preferred.short_description) ? preferred.short_description : "";
+  const shortDescription = primaryShortDescription || fallbackShortDescription || preferredShortDescription || primary.short_description || fallback.short_description;
 
   return {
-    ...base,
+    ...preferred,
+    tool_id: primary.tool_id || fallback.tool_id,
+    slug: canonicalSlug(primary, fallback),
+    tool_name: primary.tool_name || fallback.tool_name,
+    category: primary.category || fallback.category,
+    sub_category: primary.sub_category || fallback.sub_category,
     short_description: shortDescription,
-    editor_quote: base.editor_quote || fallback.editor_quote,
-    full_description: base.full_description || fallback.full_description,
-    recommended_use_cases: base.recommended_use_cases.length ? base.recommended_use_cases : fallback.recommended_use_cases,
-    recommended_users: base.recommended_users.length ? base.recommended_users : fallback.recommended_users,
-    strengths: base.strengths.length ? base.strengths : fallback.strengths,
-    cautions: base.cautions.length ? base.cautions : fallback.cautions,
-    pros: base.pros.length ? base.pros : fallback.pros,
-    cons: base.cons.length ? base.cons : fallback.cons,
-    usage_steps: base.usage_steps.length ? base.usage_steps : fallback.usage_steps,
-    youtube_summary: base.youtube_summary.length ? base.youtube_summary : fallback.youtube_summary,
-    category_paths: base.category_paths.length ? base.category_paths : fallback.category_paths,
-    tags: base.tags.length ? base.tags : fallback.tags,
-    use_tags: base.use_tags.length ? base.use_tags : fallback.use_tags,
-    official_url: base.official_url && base.official_url !== "#" ? base.official_url : fallback.official_url,
-    localized_content: { ...fallback.localized_content, ...base.localized_content },
+    editor_quote: primary.editor_quote || fallback.editor_quote,
+    full_description: primary.full_description || fallback.full_description,
+    recommended_use_cases: primary.recommended_use_cases.length ? primary.recommended_use_cases : fallback.recommended_use_cases,
+    recommended_users: primary.recommended_users.length ? primary.recommended_users : fallback.recommended_users,
+    strengths: primary.strengths.length ? primary.strengths : fallback.strengths,
+    cautions: primary.cautions.length ? primary.cautions : fallback.cautions,
+    pros: primary.pros.length ? primary.pros : fallback.pros,
+    cons: primary.cons.length ? primary.cons : fallback.cons,
+    usage_steps: primary.usage_steps.length ? primary.usage_steps : fallback.usage_steps,
+    youtube_summary: primary.youtube_summary.length ? primary.youtube_summary : fallback.youtube_summary,
+    category_paths: primary.category_paths.length ? primary.category_paths : fallback.category_paths,
+    tags: primary.tags.length ? primary.tags : fallback.tags,
+    use_tags: primary.use_tags.length ? primary.use_tags : fallback.use_tags,
+    official_url: primary.official_url && primary.official_url !== "#" ? primary.official_url : fallback.official_url,
+    localized_content: { ...fallback.localized_content, ...primary.localized_content },
     ...zeroRatingState
   };
 }
@@ -591,9 +608,10 @@ export async function getTools(sort: SortKey = "popular") {
   const rows = fillDownRows(mainRows).map((row) => mergeContentOverlay(row, contentOverlays));
   const sheetTools = rows
     .map(adapt)
-    .filter((tool): tool is Tool => Boolean(tool))
-    .map((tool) => attachEnglishContentOverlay(tool, englishContentOverlays));
-  return sortTools(dedupeToolsByName([...sheetTools, ...seedTools]), sort);
+    .filter((tool): tool is Tool => Boolean(tool));
+  const dedupedTools = dedupeToolsByName([...sheetTools, ...seedTools]);
+  const localizedTools = dedupedTools.map((tool) => attachEnglishContentOverlay(tool, englishContentOverlays));
+  return sortTools(localizedTools, sort);
 }
 
 export async function getToolBySlug(slug: string) {
