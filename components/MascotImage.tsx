@@ -13,9 +13,9 @@ const mascotMap: Record<MascotType, { src: string; alt: string }> = {
 };
 
 const sizeMap: Record<MascotSize, { width: number; height: number }> = {
-  sm: { width: 32, height: 32 },
-  md: { width: 56, height: 56 },
-  lg: { width: 88, height: 88 }
+  sm: { width: 24, height: 24 },
+  md: { width: 32, height: 32 },
+  lg: { width: 44, height: 44 }
 };
 
 export function MascotImage({ type, size = "md", className }: { type: MascotType; size?: MascotSize; className?: string }) {
@@ -28,7 +28,7 @@ export function MascotImage({ type, size = "md", className }: { type: MascotType
       alt={mascot.alt}
       width={dimensions.width}
       height={dimensions.height}
-      className={cn("shrink-0 object-contain", className)}
+      className={cn("shrink-0 object-contain [image-rendering:pixelated]", className)}
     />
   );
 }
