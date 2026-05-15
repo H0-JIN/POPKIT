@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import type { Review, Tool } from "@/lib/types";
+import { useLanguage } from "@/lib/i18n";
 import { ReviewCard } from "@/components/ReviewCard";
 import { BestComments } from "@/components/BestComments";
 import { LoadMoreButton } from "@/components/LoadMoreButton";
@@ -32,28 +33,7 @@ const initialForm: FormState = {
   comment: ""
 };
 
-const detailedRatingFields = [
-  ["rating_work_usefulness", "업무 활용도"],
-  ["rating_output_quality", "결과물 품질"],
-  ["rating_difficulty", "사용 난이도"],
-  ["rating_price", "가격 만족도"],
-  ["rating_korean_support", "한국어 지원"]
-] as const;
-
-const scoreLabels = [
-  ["업무 활용도", "rating_work_usefulness"],
-  ["결과물 품질", "rating_output_quality"],
-  ["사용 난이도", "rating_difficulty"],
-  ["가격 만족도", "rating_price"],
-  ["한국어 지원", "rating_korean_support"]
-] as const;
-
-function validateForm(form: FormState) {
-  if (!form.user_role.trim()) return "사용자 역할을 입력해주세요.";
-  if (!form.rating_total) return "종합 평점을 1~5점으로 선택해주세요.";
-  if (form.comment.trim().length === 0) return "리뷰 본문을 입력해주세요.";
-  return "";
-}
+const detailedRatingKeys = ["rating_work_usefulness", "rating_output_quality", "rating_difficulty", "rating_price", "rating_korean_support"] as const;
 
 function averageRating(reviews: Review[], field: RatingKey) {
   const ratedReviews = reviews.filter((review) => typeof review[field] === "number" && review[field] > 0);
@@ -63,7 +43,16 @@ function averageRating(reviews: Review[], field: RatingKey) {
 function optionalRating(value: number | null) {
   return value === null ? null : value;
 }
+
 export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReviews: Review[] }) {
+  const { t } = useLanguage();
+  const detailedRatingLabels = {
+    rating_work_usefulness: t.reviews.work,
+    rating_output_quality: t.reviews.quality,
+    rating_difficulty: t.reviews.difficulty,
+    rating_price: t.reviews.price,
+    rating_korean_support: t.reviews.korean
+  } as const;
   const [localReviews, setLocalReviews] = useState<Review[]>([]);
   const [form, setForm] = useState<FormState>(initialForm);
   const [showDetailedRatings, setShowDetailedRatings] = useState(false);
@@ -85,6 +74,13 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
     };
   }, [actualReviews]);
   const exampleBestReviews = useMemo(() => exampleReviews.map((review) => ({ ...review, review_id: `${review.review_id}_${tool.tool_id}`, tool_id: tool.tool_id, tool_slug: tool.slug, tool_name: tool.tool_name })), [tool]);
+
+  const validateForm = (currentForm: FormState) => {
+    if (!currentForm.user_role.trim()) return t.reviews.roleRequired;
+    if (!currentForm.rating_total) return t.reviews.ratingRequired;
+    if (currentForm.comment.trim().length === 0) return t.reviews.commentRequired;
+    return "";
+  };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -112,14 +108,14 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
       };
       const res = await fetch("/api/reviews", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
       const data = (await res.json().catch(() => ({}))) as { review?: Review; error?: string };
-      if (!res.ok || !data.review) throw new Error(data.error || "리뷰 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      if (!res.ok || !data.review) throw new Error(t.reviews.failed);
       setLocalReviews((prev) => [data.review as Review, ...prev]);
       setForm(initialForm);
       setShowDetailedRatings(false);
       setVisible((current) => Math.max(current, 1));
-      setMessage({ type: "success", text: "리뷰가 저장되었습니다. 화면에 바로 반영했어요." });
-    } catch (error) {
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "리뷰 저장에 실패했습니다. 잠시 후 다시 시도해주세요." });
+      setMessage({ type: "success", text: t.reviews.saved });
+    } catch {
+      setMessage({ type: "error", text: t.reviews.failed });
     } finally {
       setIsSubmitting(false);
     }
@@ -132,58 +128,58 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
           {hasReviews ? (
             <>
               <div className="text-5xl font-black text-amber-200">{summary.rating_total.toFixed(1)}</div>
-              <p className="mt-2 text-sm text-zinc-500">종합 평점 · {summary.count}개 평가</p>
+              <p className="mt-2 text-sm text-zinc-500">{t.reviews.totalSummary(summary.count)}</p>
             </>
           ) : (
             <>
-              <div className="text-2xl font-black text-white">아직 사용자 평가가 없습니다.</div>
-              <p className="mt-2 text-sm text-zinc-500">첫 리뷰를 남겨보세요.</p>
+              <div className="text-2xl font-black text-white">{t.reviews.noRatings}</div>
+              <p className="mt-2 text-sm text-zinc-500">{t.reviews.firstReview}</p>
             </>
           )}
         </div>
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           {hasReviews ? (
-            scoreLabels.map(([label, key]) => (
-              <div key={label} className="mb-3 grid grid-cols-[100px_1fr_36px] items-center gap-3 text-sm">
-                <span className="text-zinc-400">{label}</span>
+            detailedRatingKeys.map((key) => (
+              <div key={key} className="mb-3 grid grid-cols-[100px_1fr_36px] items-center gap-3 text-sm">
+                <span className="text-zinc-400">{detailedRatingLabels[key]}</span>
                 <span className="h-2 overflow-hidden rounded-full bg-white/10"><span className="block h-full rounded-full bg-cyan-300" style={{ width: `${(summary[key] / 5) * 100}%` }} /></span>
                 <b>{summary[key].toFixed(1)}</b>
               </div>
             ))
           ) : (
-            <p className="text-sm leading-6 text-zinc-500">평가가 쌓이면 업무 활용도와 결과물 품질 같은 세부 지표를 함께 보여드릴 예정입니다.</p>
+            <p className="text-sm leading-6 text-zinc-500">{t.reviews.detailLater}</p>
           )}
         </div>
       </section>
       {hasReviews ? <BestComments reviews={actualReviews} /> : <BestComments reviews={exampleBestReviews} />}
       <section>
-        <h3 className="text-lg font-bold">전체 댓글</h3>
+        <h3 className="text-lg font-bold">{t.reviews.all}</h3>
         {hasReviews ? (
           <div className="mt-3 space-y-4">{actualReviews.slice(0, visible).map((review) => <ReviewCard key={review.review_id} review={review} />)}</div>
         ) : (
-          <p className="mt-3 rounded-3xl border border-dashed border-white/10 p-6 text-zinc-500">아직 실제 댓글이 없습니다. 이 AI를 사용해봤다면 첫 리뷰를 남겨주세요.</p>
+          <p className="mt-3 rounded-3xl border border-dashed border-white/10 p-6 text-zinc-500">{t.reviews.noComments}</p>
         )}
-        {actualReviews.length > visible && <LoadMoreButton onClick={() => setVisible((v) => v + 5)}>댓글 더 보기</LoadMoreButton>}
+        {actualReviews.length > visible && <LoadMoreButton onClick={() => setVisible((v) => v + 5)}>{t.reviews.loadMore}</LoadMoreButton>}
       </section>
       <form onSubmit={submit} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="text-lg font-bold">리뷰 작성</h3>
+        <h3 className="text-lg font-bold">{t.reviews.write}</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <input name="role" value={form.user_role} onChange={(event) => setForm((prev) => ({ ...prev, user_role: event.target.value }))} placeholder="직무 (예: 기획자)" className="rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 outline-none" />
-          <StarRatingInput label="종합 평점" name="rating_total" value={form.rating_total} onChange={(rating) => setForm((prev) => ({ ...prev, rating_total: rating }))} required />
+          <input name="role" value={form.user_role} onChange={(event) => setForm((prev) => ({ ...prev, user_role: event.target.value }))} placeholder={t.reviews.role} className="rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 outline-none" />
+          <StarRatingInput label={t.reviews.overall} name="rating_total" value={form.rating_total} onChange={(rating) => setForm((prev) => ({ ...prev, rating_total: rating }))} required />
         </div>
         <button type="button" onClick={() => setShowDetailedRatings((open) => !open)} className="mt-3 rounded-2xl border border-white/10 px-4 py-2 text-sm font-bold text-cyan-200 hover:bg-white/5" aria-expanded={showDetailedRatings}>
-          {showDetailedRatings ? "세부 평가 접기" : "더 자세히 평가하기"}
+          {showDetailedRatings ? t.reviews.hideDetailed : t.reviews.addDetailed}
         </button>
         {showDetailedRatings && (
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {detailedRatingFields.map(([key, label]) => (
-              <StarRatingInput key={key} label={label} name={key} value={form[key]} onChange={(rating) => setForm((prev) => ({ ...prev, [key]: rating }))} />
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {detailedRatingKeys.map((key) => (
+              <StarRatingInput key={key} label={detailedRatingLabels[key]} name={key} value={form[key]} onChange={(rating) => setForm((prev) => ({ ...prev, [key]: rating }))} />
             ))}
           </div>
         )}
-        <textarea name="comment" value={form.comment} onChange={(event) => setForm((prev) => ({ ...prev, comment: event.target.value }))} placeholder="짧아도 좋습니다. 실제로 써본 느낌을 남겨주세요." className="mt-3 min-h-28 w-full rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 outline-none" />
+        <textarea value={form.comment} onChange={(event) => setForm((prev) => ({ ...prev, comment: event.target.value }))} placeholder={t.reviews.commentPlaceholder} className="mt-3 min-h-28 w-full rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 outline-none" />
         {message && <p className={message.type === "success" ? "mt-3 text-sm font-semibold text-cyan-200" : "mt-3 text-sm font-semibold text-rose-300"}>{message.text}</p>}
-        <button disabled={isSubmitting} className="mt-3 rounded-2xl bg-cyan-300 px-5 py-3 font-black text-zinc-950 disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? "저장 중..." : "리뷰 등록"}</button>
+        <button disabled={isSubmitting} className="mt-3 rounded-2xl bg-cyan-300 px-5 py-3 font-black text-zinc-950 disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? t.reviews.saving : t.reviews.submit}</button>
       </form>
     </div>
   );
