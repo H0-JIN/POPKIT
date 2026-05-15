@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTools } from "@/lib/data/tools";
 import { getUpdates } from "@/lib/data/updates";
 
-export const metadata = { title: "AI 업데이트 모음 | AI Tool Archive", description: "공식 출처 기반 AI 업데이트 히스토리를 모아봅니다." };
+export const metadata = { title: "AI 업데이트 모음 | POPKIT", description: "공식 출처 기반 AI 업데이트 히스토리를 모아봅니다." };
 
 export default async function UpdatesPage() {
   const [tools, updates] = await Promise.all([getTools(), getUpdates()]);

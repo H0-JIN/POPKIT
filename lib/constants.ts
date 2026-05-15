@@ -1,4 +1,4 @@
-export const SITE_NAME = "AI Tool Archive";
+export const SITE_NAME = "POPKIT";
 export const NAVIGATION = [
   { label: "All Cases", href: "/", children: [] },
   { label: "기획", href: "/category/기획", children: ["리서치", "문서 작성", "PPT/제안서", "콘텐츠"] },

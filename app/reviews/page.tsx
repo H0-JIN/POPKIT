@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTools } from "@/lib/data/tools";
 import { RatingBadge } from "@/components/RatingBadge";
 
-export const metadata = { title: "리뷰 많은 AI 툴 | AI Tool Archive", description: "댓글과 평가가 많은 AI 툴을 확인하세요." };
+export const metadata = { title: "리뷰 많은 AI 툴 | POPKIT", description: "댓글과 평가가 많은 AI 툴을 확인하세요." };
 
 export default async function ReviewsPage() {
   const tools = (await getTools()).sort((a, b) => b.comment_count - a.comment_count).slice(0, 24);

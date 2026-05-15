@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tool) return { title: SITE_NAME };
   return {
     title: `${tool.tool_name} - 평점, 사용법, 업데이트 히스토리 | ${SITE_NAME}`,
-    description: `${tool.tool_name}의 주요 기능, 사용법 영상, 사용자 리뷰, 최신 업데이트를 확인하세요. ${tool.category}, ${tool.recommended_use_cases.join(", ")}`,
+    description: `${tool.tool_name}의 주요 기능, 사용법, 사용자 리뷰, 업데이트 정보를 ${SITE_NAME}에서 확인하세요.`,
     openGraph: { title: `${tool.tool_name} | ${SITE_NAME}`, description: tool.short_description, images: tool.image_url ? [tool.image_url] : undefined }
   };
 }

@@ -12,7 +12,7 @@ export function Sidebar({ activeCategory, activeSubCategory }: { activeCategory?
     <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-white/10 bg-zinc-950/80 px-5 py-6 backdrop-blur lg:block">
       <Link href="/" className="mb-8 flex items-center gap-3">
         <span className="grid size-10 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 font-black text-zinc-950">AI</span>
-        <span><strong className="block text-lg">AI Tool Archive</strong><span className="text-xs text-zinc-500">{t.navigation.brandHelper}</span></span>
+        <span><strong className="block text-lg">POPKIT</strong><span className="text-xs text-zinc-500">{t.navigation.brandHelper}</span></span>
       </Link>
       <nav className="space-y-5">
         {NAVIGATION.map((item) => (
