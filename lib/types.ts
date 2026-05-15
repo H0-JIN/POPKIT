@@ -1,5 +1,17 @@
 export type SortKey = "popular" | "updated" | "rating" | "comments" | "recent";
 
+export type LocalizedToolContent = {
+  editor_quote?: string;
+  short_description?: string;
+  full_description?: string;
+  recommended_use_cases?: string[];
+  recommended_users?: string[];
+  strengths?: string[];
+  cautions?: string[];
+  usage_steps?: string[];
+  youtube_summary?: string[];
+};
+
 export type Tool = {
   tool_id: string;
   slug: string;
@@ -36,6 +48,9 @@ export type Tool = {
   strengths: string[];
   cautions: string[];
   alternatives: string[];
+  localized_content?: {
+    en?: LocalizedToolContent;
+  };
 };
 
 export type ToolUpdate = {
