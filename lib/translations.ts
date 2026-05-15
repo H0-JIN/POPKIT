@@ -1,6 +1,6 @@
 export const messages = {
   ko: {
-    common: { business: "기업 서비스", backToList: "목록으로", loadingMore: "더 보기" },
+    common: { business: "기업 서비스", submitTool: "툴 제보", backToList: "목록으로", loadingMore: "더 보기" },
     hero: {
       eyebrow: "Curated AI tools for planners, designers, developers",
       title: "AI 툴을 직무와 업무별로\n빠르게 탐색하세요",
@@ -34,6 +34,32 @@ export const messages = {
     reviews: {
       noRatings: "아직 사용자 평가가 없습니다.", firstReview: "첫 리뷰를 남겨보세요.", detailLater: "평가가 쌓이면 업무 활용도와 결과물 품질 같은 세부 지표를 함께 보여드릴 예정입니다.", top: "베스트 댓글", all: "전체 댓글", noComments: "아직 실제 댓글이 없습니다. 이 AI를 사용해봤다면 첫 리뷰를 남겨주세요.", loadMore: "댓글 더 보기", write: "리뷰 작성", role: "직무", rolePlaceholder: "직무를 선택해주세요", roleOptions: { 기획자: "기획자", 개발자: "개발자", 디자이너: "디자이너", 기타: "기타" }, overall: "종합 평점", addDetailed: "더 자세히 평가하기", hideDetailed: "세부 평가 접기", work: "업무 활용도", quality: "결과물 품질", difficulty: "사용 난이도", price: "가격 만족도", korean: "한국어 지원", commentPlaceholder: "짧아도 좋습니다. 실제로 써본 느낌을 남겨주세요.", submit: "리뷰 등록", saving: "저장 중...", saved: "리뷰가 저장되었습니다. 화면에 바로 반영했어요.", failed: "리뷰 저장에 실패했습니다. 잠시 후 다시 시도해주세요.", roleRequired: "직무를 선택해주세요.", ratingRequired: "종합 평점을 1~5점으로 선택해주세요.", commentRequired: "리뷰 본문을 입력해주세요.", totalSummary: (count: number) => `종합 평점 · ${count}개 평가`, roleRatingsTitle: "직무별 평가", roleRatingsDescription: "직무에 따라 평가가 어떻게 달라지는지 확인해보세요.", roleReviewCount: (count: number) => `리뷰 ${count}개`, noRoleRatings: "평가 전", example: "예시", helpful: (count: number) => `추천 ${count}`
     },
+    submitTool: {
+      title: "AI 툴을 제보해주세요",
+      description: "POPKIT에 추가되면 좋을 AI 툴을 알려주세요. 검토 후 서비스에 반영될 수 있습니다.",
+      reviewNotice: "제보된 툴은 운영 검토 후 콘텐츠 품질과 서비스 방향에 맞는 경우 반영됩니다.",
+      emailHint: "이메일은 추가 확인이 필요할 때만 참고합니다.",
+      submit: "제보 보내기",
+      saving: "저장 중...",
+      success: "제보가 접수되었습니다. 검토 후 POPKIT에 반영될 수 있습니다.",
+      failed: "제보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.",
+      fields: {
+        toolName: { label: "툴 이름", placeholder: "툴 이름" },
+        officialUrl: { label: "공식 URL", placeholder: "https://example.com" },
+        suggestedUse: { label: "어떤 용도로 쓰는 툴인가요?", placeholder: "어떤 용도로 쓰는 툴인가요?" },
+        reason: { label: "추천 이유 / 제보 이유", placeholder: "왜 POPKIT에 추가되면 좋다고 생각하나요?" },
+        role: { label: "제보자 직무", placeholder: "직무를 선택해주세요" },
+        email: { label: "이메일 (선택)", placeholder: "이메일 (선택)" }
+      },
+      validation: {
+        toolNameRequired: "툴 이름을 입력해주세요.",
+        urlInvalid: "올바른 공식 URL을 입력해주세요.",
+        suggestedUseRequired: "툴의 용도를 입력해주세요.",
+        reasonRequired: "추천 이유를 입력해주세요.",
+        roleRequired: "직무를 선택해주세요.",
+        emailInvalid: "올바른 이메일 형식을 입력해주세요."
+      }
+    },
     empty: { title: "결과가 없습니다", description: "검색어나 필터를 조정해 보세요." },
     business: {
       heroTitle: "유저의 경험이 쌓일수록, AI 추천은 더 정확해집니다",
@@ -45,7 +71,7 @@ export const messages = {
     }
   },
   en: {
-    common: { business: "Business", backToList: "Back to list", loadingMore: "Load more" },
+    common: { business: "Business", submitTool: "Submit a tool", backToList: "Back to list", loadingMore: "Load more" },
     hero: { eyebrow: "Curated AI tools for planners, designers, and developers", title: "Explore AI tools faster by role and task", description: "Compare AI tools by ratings, reviews, and official updates, then check practical use cases in detail." },
     rolePopular: { title: "Popular AI by role", description: "Discover AI tools rated highly by people in each role.", empty: "Popular AI tools for this role will appear as reviews accumulate.", reviewCount: (count: number) => `${count} reviews` },
     search: { srLabel: "Search", placeholder: "Search by AI name, use case, or tag" },
@@ -64,6 +90,32 @@ export const messages = {
       overview: { about: "About this AI", aboutTitle: (name: string) => `Understand ${name} at a glance`, metrics: "Key metrics", ratingCount: "Rating / reviews", noUserRatings: "Not enough ratings yet.", firstReview: "Be the first to leave a review.", commentCount: "Review count", countUnit: (count: string) => `${count}`, updateHistory: "Update history", officialHistory: "Official-source records", recentUpdate: "Recent update", preparing: "Information is being prepared.", popularityTitle: "Popularity by use case", popularityHeading: "View momentum by use case", popularityDescription: "See rankings and weekly trends based on detail-page views over the last 12 weeks.", popularityEmptyTitle: "Popularity trends will appear as view data accumulates.", popularityEmptyDescription: "Rankings and weekly trends will be available after enough detail-page visits are collected.", useCaseRankLabel: "Use-case rank", useCaseRank: (rank: number, tag: string) => `#${rank} in ${tag}`, comparedToolsLabel: "Compared tools", comparedTools: (count: number) => `Among ${count} tools`, lastTwelveWeeksLabel: "Last 12 weeks", lastTwelveWeeksViews: (count: string) => `${count} views over the last 12 weeks`, views: "Views", features: "Key features", recommendedTasks: "Recommended tasks", recommendedUsers: "Recommended users", strengths: "Strengths", cautions: "Cautions", alternatives: "Similar / alternative tools" }
     },
     reviews: { noRatings: "No user ratings yet.", firstReview: "Be the first to leave a review.", detailLater: "Detailed metrics will appear as more reviews come in.", top: "Top reviews", all: "All reviews", noComments: "No reviews yet. If you have tried this AI, leave the first review.", loadMore: "Load more reviews", write: "Write a review", role: "Role", rolePlaceholder: "Select your role", roleOptions: { 기획자: "Planner", 개발자: "Developer", 디자이너: "Designer", 기타: "Other" }, overall: "Overall rating", addDetailed: "Add detailed ratings", hideDetailed: "Hide detailed ratings", work: "Work usefulness", quality: "Output quality", difficulty: "Ease of use", price: "Value for price", korean: "Korean support", commentPlaceholder: "Short is fine. Share what it was actually like to use.", submit: "Submit review", saving: "Saving...", saved: "Your review has been saved and is now visible.", failed: "Failed to save your review. Please try again shortly.", roleRequired: "Please select your role.", ratingRequired: "Please select an overall rating from 1 to 5.", commentRequired: "Please write a review.", totalSummary: (count: number) => `Overall rating · ${count} reviews`, roleRatingsTitle: "Ratings by role", roleRatingsDescription: "See how different roles evaluate this tool.", roleReviewCount: (count: number) => `${count} reviews`, noRoleRatings: "No ratings yet", example: "Example", helpful: (count: number) => `Helpful ${count}` },
+    submitTool: {
+      title: "Submit an AI tool",
+      description: "Tell us about an AI tool that should be added to POPKIT. Submissions may be reviewed and reflected in the service.",
+      reviewNotice: "Submitted tools are reviewed before inclusion based on content quality and service fit.",
+      emailHint: "Email is optional and only used if we need to follow up.",
+      submit: "Submit tool",
+      saving: "Saving...",
+      success: "Your submission has been received. It may be reviewed and reflected in POPKIT.",
+      failed: "Failed to submit the tool. Please try again shortly.",
+      fields: {
+        toolName: { label: "Tool name", placeholder: "Tool name" },
+        officialUrl: { label: "Official URL", placeholder: "https://example.com" },
+        suggestedUse: { label: "What is this tool used for?", placeholder: "What is this tool used for?" },
+        reason: { label: "Recommendation reason", placeholder: "Why should POPKIT consider adding it?" },
+        role: { label: "Your role", placeholder: "Select your role" },
+        email: { label: "Email (optional)", placeholder: "Email (optional)" }
+      },
+      validation: {
+        toolNameRequired: "Please enter the tool name.",
+        urlInvalid: "Please enter a valid official URL.",
+        suggestedUseRequired: "Please describe what the tool is used for.",
+        reasonRequired: "Please explain why it should be added.",
+        roleRequired: "Please select your role.",
+        emailInvalid: "Please enter a valid email address."
+      }
+    },
     empty: { title: "No results", description: "Try adjusting your search or filters." },
     business: {
       heroTitle: "The more user experience accumulates, the more accurate AI recommendations become.", heroDescription: "POPKIT is not just a directory of AI tools. It is a platform that helps users choose and combine better AI tools based on real reviews and usage data.", heroSub: "Experience shared by planners, designers, developers, and marketers becomes a better decision-making signal for the next user and a starting point for enterprise AI adoption strategy.", primaryCta: "Talk to us", partnerCta: "Partnership inquiry",
