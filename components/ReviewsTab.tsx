@@ -9,6 +9,7 @@ import { LoadMoreButton } from "@/components/LoadMoreButton";
 import { StarRatingInput } from "@/components/StarRatingInput";
 import { MascotImage } from "@/components/MascotImage";
 import { exampleReviews } from "@/lib/data/seed";
+import { isReviewRole, REVIEW_ROLE_OPTIONS } from "@/lib/reviewRoles";
 
 type FormState = {
   user_role: string;
@@ -46,7 +47,7 @@ function optionalRating(value: number | null) {
 }
 
 export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReviews: Review[] }) {
-  const { t } = useLanguage();
+  const { locale, t } = useLanguage();
   const detailedRatingLabels = {
     rating_work_usefulness: t.reviews.work,
     rating_output_quality: t.reviews.quality,
@@ -77,7 +78,7 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
   const exampleBestReviews = useMemo(() => exampleReviews.map((review) => ({ ...review, review_id: `${review.review_id}_${tool.tool_id}`, tool_id: tool.tool_id, tool_slug: tool.slug, tool_name: tool.tool_name })), [tool]);
 
   const validateForm = (currentForm: FormState) => {
-    if (!currentForm.user_role.trim()) return t.reviews.roleRequired;
+    if (!isReviewRole(currentForm.user_role)) return t.reviews.roleRequired;
     if (!currentForm.rating_total) return t.reviews.ratingRequired;
     if (currentForm.comment.trim().length === 0) return t.reviews.commentRequired;
     return "";
@@ -98,7 +99,7 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
         tool_id: tool.tool_id,
         tool_slug: tool.slug,
         tool_name: tool.tool_name,
-        user_role: form.user_role.trim(),
+        user_role: form.user_role,
         rating_total: Number(form.rating_total),
         rating_work_usefulness: optionalRating(form.rating_work_usefulness),
         rating_output_quality: optionalRating(form.rating_output_quality),
@@ -168,7 +169,16 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
       <form onSubmit={submit} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
         <h3 className="text-lg font-bold">{t.reviews.write}</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <input name="role" value={form.user_role} onChange={(event) => setForm((prev) => ({ ...prev, user_role: event.target.value }))} placeholder={t.reviews.role} className="rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 outline-none" />
+          <select
+            name="role"
+            value={form.user_role}
+            onChange={(event) => setForm((prev) => ({ ...prev, user_role: event.target.value }))}
+            className="rounded-2xl border border-white/10 bg-zinc-950 px-4 py-3 outline-none"
+            required
+          >
+            <option value="" disabled>{t.reviews.rolePlaceholder}</option>
+            {REVIEW_ROLE_OPTIONS.map((role) => <option key={role} value={role}>{t.reviews.roleOptions[role]}</option>)}
+          </select>
           <StarRatingInput label={t.reviews.overall} name="rating_total" value={form.rating_total} onChange={(rating) => setForm((prev) => ({ ...prev, rating_total: rating }))} required />
         </div>
         <button type="button" onClick={() => setShowDetailedRatings((open) => !open)} className="mt-3 rounded-2xl border border-white/10 px-4 py-2 text-sm font-bold text-cyan-200 hover:bg-white/5" aria-expanded={showDetailedRatings}>
