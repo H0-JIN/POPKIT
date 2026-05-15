@@ -28,12 +28,12 @@ export function ToolDetailHeader({ tool }: { tool: Tool }) {
             <div className="flex flex-wrap gap-2 text-xs font-semibold text-cyan-200">{categoryPaths.slice(0, 4).map((path) => <span key={path} className="rounded-full bg-cyan-300/10 px-2.5 py-1">{translateCategoryPath(path, locale)}</span>)}{categoryPaths.length > 4 ? <span className="rounded-full bg-white/5 px-2.5 py-1 text-zinc-400">+{categoryPaths.length - 4}</span> : null}</div>
             <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">{tool.tool_name}</h1>
             {displayTool.editor_quote ? (
-              <div className="mt-4 flex max-w-3xl items-start gap-3 rounded-3xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4 sm:gap-4">
-                <MascotImage type="editor" size="md" className="size-11 sm:size-14" />
-                <div>
+              <div className="mt-4 max-w-3xl rounded-3xl border border-cyan-300/15 bg-cyan-300/[0.06] p-4">
+                <div className="flex items-center gap-2">
+                  <MascotImage type="editor" size="sm" className="size-6 sm:size-7" />
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">{t.detail.editorQuoteLabel}</p>
-                  <p className="mt-2 text-lg font-black leading-8 text-cyan-100 sm:text-2xl">“{displayTool.editor_quote}”</p>
                 </div>
+                <p className="mt-2 text-lg font-black leading-8 text-cyan-100 sm:text-2xl">“{displayTool.editor_quote}”</p>
               </div>
             ) : null}
             <p className="mt-3 max-w-3xl text-base leading-7 text-zinc-300">{displayTool.short_description}</p>

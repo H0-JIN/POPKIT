@@ -158,8 +158,8 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
         {hasReviews ? (
           <div className="mt-3 space-y-4">{actualReviews.slice(0, visible).map((review) => <ReviewCard key={review.review_id} review={review} />)}</div>
         ) : (
-          <div className="mt-3 flex flex-col items-center gap-3 rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-6 text-center text-zinc-500 sm:flex-row sm:text-left">
-            <MascotImage type="community" size="lg" className="size-16 sm:size-20" />
+          <div className="mt-3 flex items-center justify-center gap-3 rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-6 text-left text-zinc-500 sm:justify-start">
+            <MascotImage type="community" size="lg" className="size-8 sm:size-10" />
             <p className="text-sm leading-6">{t.reviews.noComments}</p>
           </div>
         )}
