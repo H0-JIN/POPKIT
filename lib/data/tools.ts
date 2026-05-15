@@ -109,7 +109,14 @@ const toolNameAliases: Record<string, string> = {
   krea: "krea-ai",
   kreaai: "krea-ai",
   codex: "openai-codex",
-  openaicodex: "openai-codex"
+  openaicodex: "openai-codex",
+  figmaai: "figma-ai",
+  figmacodelayermake: "figma-make",
+  figmamake: "figma-make"
+};
+
+const canonicalToolDisplayNames: Record<string, string> = {
+  "figma-make": "Figma Make"
 };
 
 const zeroRatingState = {
@@ -223,13 +230,21 @@ function unique(items: string[]) {
   return Array.from(new Set(items.filter(Boolean)));
 }
 
-function normalizeToolNameForMatch(name: string) {
-  const normalized = name
+function normalizedToolNameKey(name: string) {
+  return name
     .normalize("NFKC")
     .toLowerCase()
     .replace(/&/g, "and")
     .replace(/[^a-z0-9가-힣]/g, "");
+}
+
+function normalizeToolNameForMatch(name: string) {
+  const normalized = normalizedToolNameKey(name);
   return toolNameAliases[normalized] ?? normalized;
+}
+
+function canonicalToolDisplayName(name: string) {
+  return canonicalToolDisplayNames[normalizeToolNameForMatch(name)] ?? name;
 }
 
 function isPlaceholderDescription(text: string) {
@@ -334,6 +349,7 @@ function completionScore(tool: Tool) {
 
 function canonicalSlug(primary: Tool, secondary: Tool) {
   const matchKey = normalizeToolNameForMatch(primary.tool_name || secondary.tool_name);
+  if (matchKey === "figma-make") return primary.slug || secondary.slug;
   if (primary.slug === matchKey || secondary.slug === matchKey) return matchKey;
   return primary.slug || secondary.slug;
 }
@@ -531,6 +547,7 @@ function fillDownRows(rows: SheetRow[]) {
 function adapt(row: SheetRow, index: number): Tool | null {
   const name = value(row, "tool_name");
   if (!name) return null;
+  const canonicalName = canonicalToolDisplayName(name);
   const seed = seedTools.find((tool) => normalizeToolNameForMatch(tool.tool_name) === normalizeToolNameForMatch(name));
   const legacyGroup = value(row, "legacy_group");
   const legacyCategory = value(row, "legacy_category");
@@ -563,7 +580,7 @@ function adapt(row: SheetRow, index: number): Tool | null {
     ...(seed ?? seedTools[index % seedTools.length]),
     tool_id: value(row, "tool_id") || seed?.tool_id || `sheet_${index + 1}`,
     slug: value(row, "slug") || seed?.slug || slugify(name),
-    tool_name: name,
+    tool_name: canonicalName,
     category,
     sub_category: subCategory,
     category_paths: categoryPaths(value(row, "category_paths"), category, subCategory, legacyCategoryPaths, seed?.category_paths),
