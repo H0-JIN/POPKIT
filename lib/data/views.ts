@@ -27,6 +27,11 @@ export type UseCasePopularity = {
   weeklyViews: WeeklyViewPoint[];
 };
 
+export type ToolViewSummary = {
+  total_view_count: number;
+  recent_24h_view_count: number;
+};
+
 function viewFromRow(row: Record<string, string>, index: number): ViewEvent {
   return {
     view_id: row.view_id || `sheet_view_${index + 1}`,
@@ -56,6 +61,60 @@ export async function getAllToolViews(): Promise<ViewEvent[]> {
 export async function getToolViews(tool: Pick<Tool, "tool_id" | "slug">): Promise<ViewEvent[]> {
   const views = await getAllToolViews();
   return views.filter((view) => view.tool_id === tool.tool_id || view.tool_slug === tool.slug);
+}
+
+
+function addViewToIndex(index: Map<string, ViewEvent[]>, key: string | undefined, view: ViewEvent) {
+  const normalizedKey = key?.trim();
+  if (!normalizedKey) return;
+  const indexedViews = index.get(normalizedKey);
+  if (indexedViews) {
+    indexedViews.push(view);
+    return;
+  }
+  index.set(normalizedKey, [view]);
+}
+
+function getIndexedViewsForTool(index: Map<string, ViewEvent[]>, tool: Pick<Tool, "tool_id" | "slug">) {
+  const views = new Set<ViewEvent>();
+  for (const key of [tool.tool_id, tool.slug]) {
+    const normalizedKey = key.trim();
+    if (!normalizedKey) continue;
+    index.get(normalizedKey)?.forEach((view) => views.add(view));
+  }
+  return Array.from(views);
+}
+
+export function buildToolViewSummaries(tools: Pick<Tool, "tool_id" | "slug">[], views: ViewEvent[], now = new Date()) {
+  const recentThreshold = now.getTime() - 24 * 60 * 60 * 1000;
+  const viewsByToolKey = new Map<string, ViewEvent[]>();
+
+  for (const view of views) {
+    addViewToIndex(viewsByToolKey, view.tool_id, view);
+    addViewToIndex(viewsByToolKey, view.tool_slug, view);
+  }
+
+  return new Map(
+    tools.map((tool) => {
+      const toolViews = getIndexedViewsForTool(viewsByToolKey, tool);
+      const summary: ToolViewSummary = {
+        total_view_count: toolViews.length,
+        recent_24h_view_count: toolViews.filter((view) => {
+          const viewedAt = new Date(view.viewed_at).getTime();
+          return !Number.isNaN(viewedAt) && viewedAt >= recentThreshold && viewedAt <= now.getTime();
+        }).length
+      };
+      return [toolKey(tool), summary];
+    })
+  );
+}
+
+export function applyViewSummariesToTools<T extends Tool>(tools: T[], views: ViewEvent[], now = new Date()): T[] {
+  const summaries = buildToolViewSummaries(tools, views, now);
+  return tools.map((tool) => {
+    const summary = summaries.get(toolKey(tool)) ?? { total_view_count: 0, recent_24h_view_count: 0 };
+    return { ...tool, ...summary };
+  });
 }
 
 export function validateViewInput(body: unknown): { ok: true; value: ViewInput } | { ok: false; error: string } {
