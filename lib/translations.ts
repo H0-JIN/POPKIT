@@ -4,13 +4,13 @@ export const messages = {
     hero: {
       eyebrow: "Curated AI tools for planners, designers, developers",
       title: "AI 툴을 직무와 업무별로\n빠르게 탐색하세요",
-      description: "기획, 디자인, 개발, 생산성 AI를 평점·댓글·공식 업데이트 기준으로 비교하고 상세 사용법까지 확인할 수 있습니다."
+      description: "실제 리뷰와 조회 흐름을 바탕으로, 직무와 목적에 맞는 AI 툴을 비교하고 더 빠르게 찾을 수 있습니다."
     },
     rolePopular: { title: "직무별 인기 AI", description: "실제 리뷰를 바탕으로 각 직무에서 평가가 좋은 AI를 모았습니다.", empty: "이 직무의 평가가 쌓이면 인기 AI를 보여드릴게요.", reviewCount: (count: number) => `리뷰 ${count}개` },
     search: { srLabel: "검색", placeholder: "AI 이름, 용도, 태그 검색" },
     sort: { views: "조회순", rating: "별점순", updated: "업데이트순", trending: "오늘 핫한순" },
     filters: { "무료": "무료", "부분 유료": "부분 유료", "유료": "유료", "초보자 추천": "초보자 추천", "한국어 지원": "한국어 지원" },
-    list: { count: (count: number) => `${count}개 AI 툴`, compare: "평점 · 댓글 · 업데이트 기준 비교" },
+    list: { count: (count: number) => `${count}개 AI 툴`, compare: "실제 반응과 업데이트 기준 비교" },
     navigation: {
       brandHelper: "Curated for makers",
       labels: {
@@ -126,12 +126,12 @@ export const messages = {
   },
   en: {
     common: { business: "Business", submitTool: "Submit a tool", backToList: "Back to list", loadingMore: "Load more" },
-    hero: { eyebrow: "Curated AI tools for planners, designers, and developers", title: "Explore AI tools faster by role and task", description: "Compare AI tools by ratings, reviews, and official updates, then check practical use cases in detail." },
+    hero: { eyebrow: "Curated AI tools for planners, designers, and developers", title: "Explore AI tools faster by role and task", description: "Compare AI tools through real reviews and interest trends, then find the right option for your role and task faster." },
     rolePopular: { title: "Popular AI by role", description: "Discover AI tools rated highly by people in each role.", empty: "Popular AI tools for this role will appear as reviews accumulate.", reviewCount: (count: number) => `${count} reviews` },
     search: { srLabel: "Search", placeholder: "Search by AI name, use case, or tag" },
     sort: { views: "Most viewed", rating: "Top rated", updated: "Recently updated", trending: "Trending today" },
     filters: { "무료": "Free", "부분 유료": "Freemium", "유료": "Paid", "초보자 추천": "Beginner-friendly", "한국어 지원": "Korean supported" },
-    list: { count: (count: number) => `${count} AI tools`, compare: "Compare by ratings, reviews, and updates" },
+    list: { count: (count: number) => `${count} AI tools`, compare: "Compare by real signals and updates" },
     navigation: {
       brandHelper: "Curated for makers",
       labels: { "All Cases": "All Tools", "기획": "Planning", "리서치": "Research", "문서 작성": "Writing", "PPT/제안서": "Presentations", "콘텐츠": "Content", "디자인": "Design", "이미지": "Image", "영상": "Video", "UX/UI": "UX/UI", "브랜드/그래픽": "Branding / Graphics", "개발": "Development", "코드 작성": "Coding", "디버깅": "Debugging", "웹사이트 제작": "Website Building", "자동화": "Automation", "기타": "Others", "생산성": "Productivity", "협업": "Collaboration", "데이터 분석": "Data Analysis" },
