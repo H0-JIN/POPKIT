@@ -14,12 +14,19 @@ export const metadata: Metadata = {
   openGraph: {
     title: siteTitle,
     description: siteDescription,
-    type: "website"
+    type: "website",
+    images: [{
+      url: "/og/popkit-og.png",
+      width: 1536,
+      height: 864,
+      alt: "POPKIT - 직무와 업무별 AI 툴 큐레이션"
+    }]
   },
   twitter: {
     card: "summary_large_image",
     title: siteTitle,
-    description: siteDescription
+    description: siteDescription,
+    images: ["/og/popkit-og.png"]
   }
 };
 
