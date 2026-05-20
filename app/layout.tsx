@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { SITE_NAME } from "@/lib/constants";
+import { SiteFooter } from "@/components/SiteFooter";
 import { LanguageProvider } from "@/lib/i18n";
 import "./globals.css";
 
@@ -23,5 +24,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <html lang="ko"><body className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,.12),transparent_32%),radial-gradient(circle_at_top_right,rgba(168,85,247,.10),transparent_28%),#09090b] font-sans antialiased"><LanguageProvider>{children}</LanguageProvider></body></html>;
+  return <html lang="ko"><body className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,.12),transparent_32%),radial-gradient(circle_at_top_right,rgba(168,85,247,.10),transparent_28%),#09090b] font-sans antialiased"><LanguageProvider>{children}<SiteFooter /></LanguageProvider></body></html>;
 }
