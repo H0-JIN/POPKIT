@@ -13,7 +13,7 @@ export function Sidebar({ activeCategory, activeSubCategory }: { activeCategory?
     <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-white/10 bg-zinc-950/80 px-5 py-6 backdrop-blur lg:block">
       <Link href="/" className="mb-8 flex items-center gap-3">
         <Image
-          src="/brand/popkit-lollipop.png"
+          src="/mascots/popkit-lollipop.png"
           alt="POPKIT lollipop symbol"
           width={40}
           height={40}
