@@ -9,6 +9,7 @@ const siteTitle = `${SITE_NAME} | 직무와 업무별 AI 툴 추천 플랫폼`;
 const siteDescription = `${SITE_NAME}은 실제 사용자 리뷰와 활용 경험을 바탕으로, 직무와 목적에 맞는 AI 툴 선택과 조합을 돕는 플랫폼입니다.`;
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://popkit.vercel.app"),
   title: siteTitle,
   description: siteDescription,
   openGraph: {
