@@ -60,6 +60,60 @@ export const messages = {
         emailInvalid: "올바른 이메일 형식을 입력해주세요."
       }
     },
+    footer: {
+      description: "실제 사용자 경험을 바탕으로, 직무와 목적에 맞는 AI 툴 선택을 돕는 플랫폼",
+      service: { title: "서비스", links: { explore: "AI 툴 탐색", business: "기업 서비스", submitTool: "툴 제보" } },
+      contact: { title: "문의", links: { partnership: "제휴 / 도입 상담", email: "이메일 문의" } },
+      policy: { title: "정책", links: { privacy: "개인정보처리방침", terms: "이용약관" } },
+      copyright: "© 2026 POPKIT. All rights reserved."
+    },
+    privacy: {
+      title: "개인정보처리방침",
+      description: "POPKIT은 서비스 운영에 필요한 범위에서만 정보를 수집하고 활용합니다.",
+      sections: [
+        { title: "1. 수집하는 정보", blocks: [
+          { label: "리뷰 작성 시", items: ["직무", "평점", "댓글 내용"] },
+          { label: "AI 툴 제보 시", items: ["툴 이름", "공식 URL", "용도 설명", "제보 이유", "직무", "이메일(선택)"] },
+          { label: "서비스 이용 과정에서", items: ["상세페이지 조회 데이터", "언어 선택 등 브라우저 저장 정보(localStorage/sessionStorage 기반)"] }
+        ] },
+        { title: "2. 이용 목적", blocks: [
+          { items: ["리뷰 및 평가 콘텐츠 표시", "직무별 인기 AI, 직무별 평가 등 서비스 기능 제공", "툴 제보 검토 및 운영", "조회 기반 인기 흐름과 탐색 경험 개선", "문의 응답"] }
+        ] },
+        { title: "3. 보관 및 관리", blocks: [
+          { items: ["수집 정보는 서비스 운영과 개선 목적 범위에서 관리합니다.", "제보 이메일은 운영 검토 또는 회신이 필요한 경우에만 참고합니다.", "불필요한 정보를 과도하게 수집하지 않습니다."] }
+        ] },
+        { title: "4. 제3자 제공", blocks: [
+          { items: ["별도 동의 없이 개인정보를 판매하거나 광고주에게 제공하지 않습니다.", "법적 요청 등 예외 상황은 관련 법령에 따릅니다."] }
+        ] },
+        { title: "5. 문의", blocks: [
+          { items: ["개인정보 관련 문의: kkcm1002@gmail.com"] }
+        ] }
+      ]
+    },
+    terms: {
+      title: "이용약관",
+      description: "POPKIT 이용과 콘텐츠 참여에 관한 기본 원칙을 안내합니다.",
+      sections: [
+        { title: "1. 서비스 목적", blocks: [
+          { items: ["POPKIT은 AI 툴 탐색, 사용자 리뷰, 툴 제보, 데이터 기반 추천 경험을 제공하는 서비스입니다."] }
+        ] },
+        { title: "2. 사용자 콘텐츠", blocks: [
+          { items: ["리뷰와 제보는 사용자가 자발적으로 제출한 콘텐츠입니다.", "허위 정보, 공격적 표현, 불법적 콘텐츠는 제한될 수 있습니다.", "운영자는 서비스 품질을 위해 사용자 콘텐츠를 검토·비공개·삭제할 수 있습니다."] }
+        ] },
+        { title: "3. AI 툴 정보", blocks: [
+          { items: ["POPKIT은 다양한 AI 툴 정보를 정리하지만, 외부 서비스의 가격, 기능, 정책 변경을 실시간으로 보장하지 않습니다.", "최종 이용 전 공식 사이트 확인을 권장합니다."] }
+        ] },
+        { title: "4. 서비스 변경", blocks: [
+          { items: ["POPKIT은 서비스 기능, 콘텐츠 구성, 정책을 개선할 수 있습니다."] }
+        ] },
+        { title: "5. 책임 제한", blocks: [
+          { items: ["POPKIT의 정보는 선택을 돕는 참고 자료이며, 특정 서비스 이용 결과를 보장하지 않습니다.", "외부 링크 및 제3자 서비스 이용은 각 서비스의 정책에 따릅니다."] }
+        ] },
+        { title: "6. 문의", blocks: [
+          { items: ["서비스 관련 문의: kkcm1002@gmail.com"] }
+        ] }
+      ]
+    },
     empty: { title: "결과가 없습니다", description: "검색어나 필터를 조정해 보세요." },
     business: {
       heroTitle: "유저의 경험이 쌓일수록, AI 추천은 더 정확해집니다",
@@ -115,6 +169,60 @@ export const messages = {
         roleRequired: "Please select your role.",
         emailInvalid: "Please enter a valid email address."
       }
+    },
+    footer: {
+      description: "A platform that helps users discover AI tools by role and task, grounded in real usage experience.",
+      service: { title: "Service", links: { explore: "Explore tools", business: "Business", submitTool: "Submit a tool" } },
+      contact: { title: "Contact", links: { partnership: "Partnership / Business inquiry", email: "Email us" } },
+      policy: { title: "Policy", links: { privacy: "Privacy Policy", terms: "Terms of Use" } },
+      copyright: "© 2026 POPKIT. All rights reserved."
+    },
+    privacy: {
+      title: "Privacy Policy",
+      description: "POPKIT collects and uses information only to the extent necessary to operate the service.",
+      sections: [
+        { title: "1. Information we collect", blocks: [
+          { label: "When writing reviews", items: ["Role", "Rating", "Comment content"] },
+          { label: "When submitting an AI tool", items: ["Tool name", "Official URL", "Description of use", "Reason for submission", "Role", "Email (optional)"] },
+          { label: "During service usage", items: ["Detail-page view data", "Browser-stored information such as language selection based on localStorage/sessionStorage"] }
+        ] },
+        { title: "2. Purpose of use", blocks: [
+          { items: ["Display review and rating content", "Provide features such as popular AI by role and ratings by role", "Review and operate tool submissions", "Improve view-based popularity trends and discovery experience", "Respond to inquiries"] }
+        ] },
+        { title: "3. Retention and management", blocks: [
+          { items: ["Collected information is managed within the scope of service operation and improvement.", "Submission emails are referenced only when operational review or a reply is needed.", "POPKIT does not collect unnecessary information excessively."] }
+        ] },
+        { title: "4. Third-party sharing", blocks: [
+          { items: ["POPKIT does not sell personal information or provide it to advertisers without separate consent.", "Exceptional situations such as legal requests are handled according to applicable laws."] }
+        ] },
+        { title: "5. Contact", blocks: [
+          { items: ["Privacy-related inquiries: kkcm1002@gmail.com"] }
+        ] }
+      ]
+    },
+    terms: {
+      title: "Terms of Use",
+      description: "These terms outline the basic principles for using POPKIT and contributing content.",
+      sections: [
+        { title: "1. Service purpose", blocks: [
+          { items: ["POPKIT provides AI tool discovery, user reviews, tool submissions, and data-based recommendation experiences."] }
+        ] },
+        { title: "2. User content", blocks: [
+          { items: ["Reviews and submissions are content voluntarily submitted by users.", "False information, offensive expressions, and illegal content may be restricted.", "Operators may review, hide, or delete content to maintain service quality."] }
+        ] },
+        { title: "3. AI tool information", blocks: [
+          { items: ["POPKIT organizes information about various AI tools, but does not guarantee real-time updates for external services’ pricing, features, or policies.", "Users are encouraged to check the official site before final use."] }
+        ] },
+        { title: "4. Service changes", blocks: [
+          { items: ["POPKIT may improve service features, content structure, and policies."] }
+        ] },
+        { title: "5. Limitation of responsibility", blocks: [
+          { items: ["Information on POPKIT is reference material to support choices and does not guarantee outcomes from using a specific service.", "Use of external links and third-party services follows each service’s own policies."] }
+        ] },
+        { title: "6. Contact", blocks: [
+          { items: ["Service inquiries: kkcm1002@gmail.com"] }
+        ] }
+      ]
     },
     empty: { title: "No results", description: "Try adjusting your search or filters." },
     business: {
