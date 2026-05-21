@@ -11,6 +11,16 @@ export const messages = {
     sort: { views: "조회순", rating: "별점순", updated: "업데이트순", trending: "오늘 핫한순" },
     filters: { "무료": "무료", "부분 유료": "부분 유료", "유료": "유료", "초보자 추천": "초보자 추천", "한국어 지원": "한국어 지원" },
     list: { count: (count: number) => `${count}개 AI 툴`, compare: "실제 반응과 업데이트 기준 비교" },
+    reviewCta: {
+      homeTitle: "써본 AI가 있다면, 10초만에 리뷰를 남겨주세요",
+      homeDescription: "리뷰가 쌓일수록 직무별 추천과 평가가 더 정확해집니다.",
+      homeButton: "리뷰할 AI 찾기",
+      detailTitle: "이 툴을 써봤다면 경험을 남겨주세요",
+      detailDescription: "짧은 리뷰도 다른 사용자가 AI 툴을 고르는 데 도움이 됩니다.",
+      detailButton: "리뷰 작성하기",
+      emptyMessage: "아직 리뷰가 없습니다. 이 AI를 써봤다면 첫 리뷰를 남겨주세요.",
+      emptyButton: "첫 리뷰 남기기"
+    },
     navigation: {
       brandHelper: "Curated for makers",
       labels: {
@@ -132,6 +142,16 @@ export const messages = {
     sort: { views: "Most viewed", rating: "Top rated", updated: "Recently updated", trending: "Trending today" },
     filters: { "무료": "Free", "부분 유료": "Freemium", "유료": "Paid", "초보자 추천": "Beginner-friendly", "한국어 지원": "Korean supported" },
     list: { count: (count: number) => `${count} AI tools`, compare: "Compare by real signals and updates" },
+    reviewCta: {
+      homeTitle: "Tried an AI tool? Leave a quick review.",
+      homeDescription: "Every review makes role-based recommendations more useful.",
+      homeButton: "Find a tool to review",
+      detailTitle: "Tried this tool? Share your experience.",
+      detailDescription: "Even a short review helps others choose the right AI tool.",
+      detailButton: "Write a review",
+      emptyMessage: "No reviews yet. If you’ve tried this AI, be the first to review it.",
+      emptyButton: "Write the first review"
+    },
     navigation: {
       brandHelper: "Curated for makers",
       labels: { "All Cases": "All Tools", "기획": "Planning", "리서치": "Research", "문서 작성": "Writing", "PPT/제안서": "Presentations", "콘텐츠": "Content", "디자인": "Design", "이미지": "Image", "영상": "Video", "UX/UI": "UX/UI", "브랜드/그래픽": "Branding / Graphics", "개발": "Development", "코드 작성": "Coding", "디버깅": "Debugging", "웹사이트 제작": "Website Building", "자동화": "Automation", "기타": "Others", "생산성": "Productivity", "협업": "Collaboration", "데이터 분석": "Data Analysis" },

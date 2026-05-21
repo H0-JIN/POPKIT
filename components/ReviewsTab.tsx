@@ -96,6 +96,10 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
   }, [actualReviews]);
   const roleRatingSummary = useMemo(() => summarizeRatingsByRole(actualReviews), [actualReviews]);
   const exampleBestReviews = useMemo(() => exampleReviews.map((review) => ({ ...review, review_id: `${review.review_id}_${tool.tool_id}`, tool_id: tool.tool_id, tool_slug: tool.slug, tool_name: tool.tool_name })), [tool]);
+  const scrollToReviewForm = () => {
+    const form = document.getElementById("review-write-form");
+    form?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const validateForm = (currentForm: FormState) => {
     if (!isReviewRole(currentForm.user_role)) return t.reviews.roleRequired;
@@ -202,6 +206,13 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
           </div>
         </section>
       )}
+      <section className="rounded-3xl border border-violet-300/25 bg-gradient-to-r from-violet-400/10 via-transparent to-cyan-400/10 p-4 sm:p-5">
+        <h3 className="text-base font-black text-white sm:text-lg">{t.reviewCta.detailTitle}</h3>
+        <p className="mt-1 text-sm text-zinc-400">{t.reviewCta.detailDescription}</p>
+        <button type="button" onClick={scrollToReviewForm} className="mt-3 rounded-2xl border border-violet-300/50 bg-violet-300/15 px-4 py-2 text-sm font-bold text-violet-100 transition hover:bg-violet-300/25">
+          {t.reviewCta.detailButton}
+        </button>
+      </section>
       {hasReviews ? <BestComments reviews={actualReviews} /> : <BestComments reviews={exampleBestReviews} />}
       <section>
         <h3 className="text-lg font-bold">{t.reviews.all}</h3>
@@ -210,12 +221,17 @@ export function ReviewsTab({ tool, initialReviews }: { tool: Tool; initialReview
         ) : (
           <div className="mt-3 flex items-center justify-center gap-3 rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-6 text-left text-zinc-500 sm:justify-start">
             <MascotImage type="community" size="lg" className="size-8 sm:size-10" />
-            <p className="text-sm leading-6">{t.reviews.noComments}</p>
+            <div>
+              <p className="text-sm leading-6">{t.reviewCta.emptyMessage}</p>
+              <button type="button" onClick={scrollToReviewForm} className="mt-2 rounded-xl border border-cyan-300/40 px-3 py-1.5 text-xs font-bold text-cyan-200 transition hover:bg-cyan-300/10">
+                {t.reviewCta.emptyButton}
+              </button>
+            </div>
           </div>
         )}
         {actualReviews.length > visible && <LoadMoreButton onClick={() => setVisible((v) => v + 5)}>{t.reviews.loadMore}</LoadMoreButton>}
       </section>
-      <form onSubmit={submit} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+      <form id="review-write-form" onSubmit={submit} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
         <h3 className="text-lg font-bold">{t.reviews.write}</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <select
