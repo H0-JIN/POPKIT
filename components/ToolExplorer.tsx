@@ -159,6 +159,11 @@ export function ToolExplorer({
         ? prev.filter((item) => item !== filter)
         : [...prev, filter],
     );
+  const focusSearchInput = () => {
+    const input = document.getElementById("tool-search-input") as HTMLInputElement | null;
+    input?.focus();
+    input?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
   return (
     <section className="flex-1 px-4 py-5 sm:px-6 lg:px-8">
@@ -188,7 +193,7 @@ export function ToolExplorer({
             </div>
             <div className="grid gap-3 sm:min-w-[560px]">
               <div className="flex flex-col gap-3 sm:flex-row">
-                <SearchBar value={query} onChange={setQuery} />
+                <SearchBar value={query} onChange={setQuery} inputId="tool-search-input" />
                 <SortDropdown value={sort} onChange={setSort} />
               </div>
               <FilterChips selected={filters} onToggle={toggle} />
@@ -198,6 +203,13 @@ export function ToolExplorer({
         {rolePopularTools ? (
           <RolePopularSection rolePopularTools={rolePopularTools} />
         ) : null}
+        <section className="mb-4 rounded-3xl border border-cyan-300/25 bg-gradient-to-r from-cyan-400/10 via-transparent to-violet-400/10 p-4 sm:p-5">
+          <h2 className="text-base font-black text-white sm:text-lg">{t.reviewCta.homeTitle}</h2>
+          <p className="mt-1 text-sm text-zinc-400">{t.reviewCta.homeDescription}</p>
+          <button type="button" onClick={focusSearchInput} className="mt-3 rounded-2xl border border-cyan-300/50 bg-cyan-300/15 px-4 py-2 text-sm font-bold text-cyan-100 transition hover:bg-cyan-300/25">
+            {t.reviewCta.homeButton}
+          </button>
+        </section>
         <div className="mb-4 flex items-center justify-between text-sm text-zinc-500">
           <span>{t.list.count(filtered.length)}</span>
           <span>{t.list.compare}</span>
