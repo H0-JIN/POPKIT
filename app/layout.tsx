@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import { SITE_NAME } from "@/lib/constants";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -32,5 +33,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <html lang="ko"><body className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,.12),transparent_32%),radial-gradient(circle_at_top_right,rgba(168,85,247,.10),transparent_28%),#09090b] font-sans antialiased"><LanguageProvider>{children}<SiteFooter /></LanguageProvider></body></html>;
+  return <html lang="ko"><head><Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5155577011919680" crossOrigin="anonymous" strategy="beforeInteractive" /></head><body className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,.12),transparent_32%),radial-gradient(circle_at_top_right,rgba(168,85,247,.10),transparent_28%),#09090b] font-sans antialiased"><LanguageProvider>{children}<SiteFooter /></LanguageProvider></body></html>;
 }
