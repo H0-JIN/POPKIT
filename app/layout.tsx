@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
     images: ["/og/popkit-og.png"]
+  },
+  other: {
+    "google-adsense-account": "ca-pub-5155577011919680"
   }
 };
 
